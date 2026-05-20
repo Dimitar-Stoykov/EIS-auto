@@ -210,7 +210,7 @@
 
         <div class="row g-4">
             {% for location in locations %}
-                <div class="col-lg-4">
+                <div class="col-lg-4 {% if locations|length == 1 %}mx-auto{% endif %}">
                     <div class="location-card h-100">
 
                         <!-- Header -->
