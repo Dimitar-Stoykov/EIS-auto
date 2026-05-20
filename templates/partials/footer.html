@@ -1,0 +1,48 @@
+<footer>
+    <div class="container">
+
+        <div class="row">
+
+            <!-- Company -->
+            <div class="col-md-4">
+                <h5 class="footer-title">{{ site.company_name }}</h5>
+                <p>
+                    Професионален автосервиз с модерна техника и опитни специалисти.
+                </p>
+            </div>
+
+            <!-- Navigation -->
+            <div class="col-md-4">
+                <h5 class="footer-title">Навигация</h5>
+                <ul class="list-unstyled">
+
+                    <li><a href="/" class="text-white text-decoration-none">Начало</a></li>
+                    <li><a href="/services/" class="text-white text-decoration-none">Услуги</a></li>
+                    <li><a href="/prices/" class="text-white text-decoration-none">Цени</a></li>
+                    <li><a href="/contacts/" class="text-white text-decoration-none">Контакти</a></li>
+
+                </ul>
+            </div>
+
+            <!-- Contact -->
+            <div class="col-md-4">
+                <h5 class="footer-title">Контакти</h5>
+
+                <p>📞 {{ site.phone }}</p>
+                <p>📍 {{ site.address }}</p>
+                <p>✉ {{ site.email }}</p>
+
+            </div>
+
+        </div>
+
+        <hr class="border-light">
+
+        <div class="text-center">
+            <small>
+                © {{ site.company_name }} {{ now|date:"Y" }}. Всички права запазени.
+            </small>
+        </div>
+
+    </div>
+</footer>

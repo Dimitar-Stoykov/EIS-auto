@@ -1,0 +1,64 @@
+<nav class="navbar navbar-expand-lg navbar-dark py-3">
+    <div class="container">
+
+        <!-- Logo -->
+        <a class="navbar-brand d-flex align-items-center" href="/">
+            {% if site.logo %}
+                <img src="{{ site.logo.url }}" alt="Logo" height="45">
+            {% else %}
+                <span class="fw-bold">{{ site.company_name }}</span>
+            {% endif %}
+        </a>
+
+        <!-- Mobile toggle -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Menu -->
+        <div class="collapse navbar-collapse" id="navbarNav">
+
+            <ul class="navbar-nav mx-auto">
+
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Начало</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="/about/">За нас</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="/services/">Услуги</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="/prices/">Цени</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="/gallery/">Галерия</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="/contacts/">Контакти</a>
+                </li>
+
+            </ul>
+
+            <!-- Right side -->
+            <div class="d-flex align-items-center gap-3">
+
+                <span class="fw-bold text-warning">
+                    {{ site.phone }}
+                </span>
+
+                <a href="tel:{{ site.phone }}" class="btn btn-primary">
+                    Запази час
+                </a>
+
+            </div>
+
+        </div>
+    </div>
+</nav>
