@@ -36,7 +36,6 @@ class HomeHero(models.Model):
     hero_image = models.ImageField(upload_to="home/hero/")
 
     primary_button_text = models.CharField(max_length=50, default="Запази час")
-    primary_button_link = models.CharField(max_length=255, default="tel:+359")
 
     secondary_button_text = models.CharField(max_length=50, default="Виж услугите")
     secondary_button_link = models.CharField(max_length=255, default="#services")
