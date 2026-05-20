@@ -5,7 +5,13 @@ from django.db import models
 
 class SiteSettings(models.Model):
     company_name = models.CharField(max_length=120)
-    logo = models.ImageField(upload_to="site/logo/", blank=True, null=True)
+    business_type = models.CharField(
+        max_length=120,
+        blank=True,
+        null=True
+    )
+
+
 
     phone = models.CharField(max_length=30)
     email = models.EmailField(blank=True)
@@ -19,12 +25,13 @@ class SiteSettings(models.Model):
         verbose_name_plural = "Site Settings"
 
     def __str__(self):
-        return self.company_name
+        return f"{self.company_name} {self.business_type}"
 
 
 class HomeHero(models.Model):
     badge_text = models.CharField(max_length=100, blank=True)
     title = models.CharField(max_length=160)
+    title_second = models.CharField(max_length=160, blank=True)
     subtitle = models.TextField()
     hero_image = models.ImageField(upload_to="home/hero/")
 

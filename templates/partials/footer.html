@@ -5,7 +5,7 @@
 
             <!-- Company -->
             <div class="col-md-4">
-                <h5 class="footer-title">{{ site.company_name }}</h5>
+                <h5 class="footer-title">{{ site.company_name }} {{site.business_type}} </h5>
                 <p>
                     Професионален автосервиз с модерна техника и опитни специалисти.
                 </p>
@@ -40,7 +40,7 @@
 
         <div class="text-center">
             <small>
-                © {{ site.company_name }} {{ now|date:"Y" }}. Всички права запазени.
+                © {{ site.company_name }} {{ site.business_type }}. Всички права запазени.
             </small>
         </div>
 
