@@ -66,7 +66,7 @@
                             <circle cx="12" cy="12" r="10"/>
                             <polyline points="12 6 12 12 16 14"/>
                         </svg>
-                        ВСЕКИ ДЕН
+                        {{ locations.first.working_hours_text }}
                     </div>
                     <div class="badge-hours">{{ locations.first.working_hours }}</div>
                 </div>
@@ -128,55 +128,44 @@
 {% if promo %}
 <section class="py-5 bg-site-dark">
     <div class="container">
-        <div class="promo-section row g-0 align-items-stretch">
 
-            <!-- Why us -->
-            <div class="col-lg-4 p-4 p-lg-5">
-                <p class="section-eyebrow">Защо да изберете нас</p>
-                <h2 class="section-title mt-1">
-                    Качество, на което можете да разчитате
-                </h2>
-                <p class="mt-3" style="color:var(--white-50);">
-                    Стремим се да осигурим най-доброто обслужване за вашия автомобил.
-                </p>
-                <ul class="why-list mt-4">
-                    <li>Прозрачни цени без скрити такси</li>
-                    <li>Гаранция на всички услуги</li>
-                    <li>Бързи срокове на изпълнение</li>
-                    <li>Доволни клиенти и доверие</li>
-                </ul>
-            </div>
-
-            <!-- Promo image -->
-            <div class="col-lg-5">
-                {% if promo.image %}
-                    <img src="{{ promo.image.url }}" class="promo-img" alt="{{ promo.title }}">
-                {% endif %}
-            </div>
-
-            <!-- Promo offer -->
-            <div class="col-lg-3 p-4 p-lg-5 promo-offer d-flex flex-column justify-content-center">
-                <p class="section-eyebrow">Промоция</p>
-                <h2 class="section-title mt-1">{{ promo.title }}</h2>
-                <p class="mt-2" style="color:var(--white-50);font-size:.9rem;">
-                    {{ promo.description }}
-                </p>
-                <div class="mt-3">
-                    <a href="{{ promo.button_link }}" class="btn-gold">
-                        {{ promo.button_text }}
-                    </a>
-                </div>
-            </div>
-
+        <div class="text-center mb-5">
+            <p class="section-eyebrow">Промоции</p>
+            <h2 class="section-title">Актуални оферти</h2>
         </div>
+
+        <div class="promo-grid">
+            {% for p in promo %}
+            <div class="promo-card {% if forloop.counter == 1 %}promo-card--featured{% endif %}">
+
+                <div class="promo-card__img">
+                    {% if p.image %}
+                        <img src="{{ p.image.url }}" alt="{{ p.title }}">
+                    {% endif %}
+                    <span class="promo-card__badge">{{ p.badge_text|default:"Промоция" }}</span>
+                </div>
+
+                <div class="promo-card__body">
+                    <h3 class="promo-card__title">{{ p.title }}</h3>
+                    <p class="promo-card__desc">{{ p.description }}</p>
+
+                    <div class="promo-card__footer">
+                        <a href="tel:{{ site.phone }}" class="promo-card__btn">
+                            {{ p.button_text|default:"Запази →" }}
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+            {% endfor %}
+        </div>
+
     </div>
 </section>
 {% endif %}
 
 
-<!-- ======================================================
-     TRUSTED BRANDS
-     ====================================================== -->
+
 <section class="py-5 bg-site-dark">
     <div class="container text-center">
         <p class="section-eyebrow">Галерия</p>
@@ -197,9 +186,6 @@
 </section>
 
 
-<!-- ======================================================
-     LOCATIONS SECTION
-     ====================================================== -->
 <section class="py-5 bg-site-dark">
     <div class="container">
 

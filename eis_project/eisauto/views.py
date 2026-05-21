@@ -31,7 +31,7 @@ class HomeView(TemplateView):
             show_on_homepage=True
         ).order_by("order")
 
-        context["promo"] = HomePromo.objects.filter(is_active=True).first()
+        context["promo"] = HomePromo.objects.filter(is_active=True)
 
         context["testimonials"] = Testimonial.objects.filter(
             is_active=True,

@@ -1,47 +1,83 @@
 <footer>
     <div class="container">
 
-        <div class="row">
+        <div class="row g-4">
 
             <!-- Company -->
-            <div class="col-md-4">
-                <h5 class="footer-title">{{ site.company_name }} {{site.business_type}} </h5>
-                <p>
+            <div class="col-lg-3 col-md-6">
+                <div class="d-flex align-items-center gap-2 mb-3">
+
+
+                    <div class="brand-icon" style="width:38px;height:38px;font-size:.85rem;">{{ site.company_name }}</div>
+
+                    <div class="brand-text-wrap">
+                        <span class="brand-sub">{{ site.business_type }}</span>
+                    </div>
+                </div>
+                <p style="color:var(--white-50);font-size:.88rem;line-height:1.7;">
                     Професионален автосервиз с модерна техника и опитни специалисти.
                 </p>
             </div>
 
             <!-- Navigation -->
-            <div class="col-md-4">
+            <div class="col-lg-2 col-md-6">
                 <h5 class="footer-title">Навигация</h5>
-                <ul class="list-unstyled">
-
-                    <li><a href="/" class="text-white text-decoration-none">Начало</a></li>
-                    <li><a href="/services/" class="text-white text-decoration-none">Услуги</a></li>
-                    <li><a href="/prices/" class="text-white text-decoration-none">Цени</a></li>
-                    <li><a href="/contacts/" class="text-white text-decoration-none">Контакти</a></li>
-
+                <ul class="list-unstyled footer-nav">
+                    <li><a href="/">Начало</a></li>
+                    <li><a href="/about/">За нас</a></li>
+                    <li><a href="/services/">Услуги</a></li>
+                    <li><a href="/prices/">Цени</a></li>
+                    <li><a href="/gallery/">Галерия</a></li>
+                    <li><a href="/contacts/">Контакти</a></li>
                 </ul>
             </div>
 
-            <!-- Contact -->
-            <div class="col-md-4">
+            {% with location=locations.first %}
+
+            <!-- Working Hours -->
+            <div class="col-lg-3 col-md-6">
+                <h5 class="footer-title">Работно Време</h5>
+                <p style="color:var(--gold);font-size:.78rem;font-weight:600;letter-spacing:.5px;margin-bottom:10px;">
+                    {{ location.working_hours_text }}
+                </p>
+                <p style="color:var(--white-50);font-size:.85rem;line-height:1.8;">
+                    🕘 {{ location.working_hours|linebreaksbr }}
+                </p>
+            </div>
+
+            <!-- Contacts -->
+            <div class="col-lg-4 col-md-6">
                 <h5 class="footer-title">Контакти</h5>
 
-                <p>📞 {{ site.phone }}</p>
-                <p>📍 {{ site.address }}</p>
-                <p>✉ {{ site.email }}</p>
+                <ul class="list-unstyled footer-contact">
+                    <li>
+                        <span class="footer-contact__icon">📍</span>
+                        <span>{{ location.address }}</span>
+                    </li>
+                    <li>
+                        <span class="footer-contact__icon">📞</span>
+                        <a href="tel:{{ location.phone }}">{{ location.phone }}</a>
+                    </li>
+                    {% if site.email %}
+                        <li>
+                            <span class="footer-contact__icon">✉</span>
+                            <a href="mailto:{{ site.email }}">{{ site.email }}</a>
+                        </li>
+                    {% endif %}
+                </ul>
 
             </div>
 
+            {% endwith %}
+
         </div>
 
-        <hr class="border-light">
+        <hr class="footer-divider">
 
-        <div class="text-center">
-            <small>
-                © {{ site.company_name }} {{ site.business_type }}. Всички права запазени.
-            </small>
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-2"
+             style="color:var(--white-50);font-size:.8rem;">
+            <span>© {{ site.company_name }} {{ site.business_type }}. Всички права запазени.</span>
+            <span style="color:rgba(255,255,255,.25);">София, България</span>
         </div>
 
     </div>

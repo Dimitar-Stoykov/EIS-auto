@@ -135,6 +135,11 @@ class Location(models.Model):
     name = models.CharField(max_length=120)
     address = models.CharField(max_length=255)
     phone = models.CharField(max_length=30, blank=True)
+    working_hours_text = models.CharField(
+        max_length=100,
+        blank=True,
+        default="ВСЕКИ ДЕН"
+    )
     working_hours = models.TextField(blank=True)
 
     google_maps_url = models.URLField(
