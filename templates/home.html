@@ -38,16 +38,26 @@
                         {% for benefit in benefits %}
                             <div class="col-6 col-md-3 benefit-item">
                                 <div class="benefit-icon">
-                                    <!-- Generic wrench/gear icon — swap per benefit if needed -->
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
-                                         viewBox="0 0 24 24" fill="none" stroke="#ffc107"
-                                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <circle cx="12" cy="12" r="3"/>
-                                        <path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/>
-                                    </svg>
+                                    {% if benefit.icon_image %}
+                                        <img src="{{ benefit.icon_image.url }}"
+                                             alt="{{ benefit.title }}"
+                                             class="benefit-icon-img">
+                                    {% elif benefit.icon %}
+                                        <i class="bi {{ benefit.icon }}" style="color:#ffc107;font-size:1.1rem;"></i>
+                                    {% else %}
+                                        <!-- Default gear icon fallback -->
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                                             viewBox="0 0 24 24" fill="none" stroke="#ffc107"
+                                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <circle cx="12" cy="12" r="3"/>
+                                            <path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/>
+                                        </svg>
+                                    {% endif %}
                                 </div>
-                                <div class="benefit-title">{{ benefit.title }}</div>
-                                <div class="benefit-desc">{{ benefit.description }}</div>
+                                <div class="benefit-text">
+                                    <div class="benefit-title">{{ benefit.title }}</div>
+                                    <div class="benefit-desc">{{ benefit.description }}</div>
+                                </div>
                             </div>
                         {% endfor %}
                     </div>
@@ -208,9 +218,9 @@
                             <small style="color:var(--gold);">{{ location.address }}</small>
                         </div>
 
-                        <!-- Google Map embed -->
+                        <!-- Google Map embed (built from coordinates) -->
                         <iframe
-                            src="{{ location.google_maps_embed_url }}"
+                            src="{{ location.embed_url }}"
                             width="100%"
                             height="220"
                             style="border:0;display:block;"

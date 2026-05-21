@@ -5,7 +5,6 @@ from .models import (
     HomeBenefit,
     Service,
     HomePromo,
-    Testimonial,
     Location,
 )
 
@@ -25,10 +24,11 @@ class HomeHeroAdmin(admin.ModelAdmin):
 
 @admin.register(HomeBenefit)
 class HomeBenefitAdmin(admin.ModelAdmin):
-    list_display = ("title", "order", "is_active")
+    list_display = ("title", "icon_image", "order", "is_active")
     list_editable = ("order", "is_active")
     list_filter = ("is_active",)
     search_fields = ("title",)
+    fields = ("title", "description", "icon_image", "icon", "order", "is_active")
 
 
 @admin.register(Service)
@@ -48,17 +48,28 @@ class HomePromoAdmin(admin.ModelAdmin):
     search_fields = ("title", "description")
 
 
-@admin.register(Testimonial)
-class TestimonialAdmin(admin.ModelAdmin):
-    list_display = ("customer_name", "rating", "source", "show_on_homepage", "order", "is_active")
-    list_editable = ("rating", "show_on_homepage", "order", "is_active")
-    list_filter = ("rating", "source", "show_on_homepage", "is_active")
-    search_fields = ("customer_name", "text")
-
-
 @admin.register(Location)
 class LocationAdmin(admin.ModelAdmin):
     list_display = ("name", "address", "phone", "show_on_homepage", "order", "is_active")
     list_editable = ("show_on_homepage", "order", "is_active")
     list_filter = ("show_on_homepage", "is_active")
     search_fields = ("name", "address", "phone")
+    fieldsets = (
+        (None, {
+            "fields": ("name", "address", "phone"),
+        }),
+        ("Работно време", {
+            "fields": ("working_hours_text", "working_hours"),
+        }),
+        ("Google Maps", {
+            "fields": ("google_maps_embed", "google_maps_url"),
+            "description": (
+                "Отвори Google Maps → намери мястото → бутон „Сподели" 
+                "→ „Вграждане на карта" 
+                "Готово — картата ще се покаже на сайта."
+            ),
+        }),
+        ("Видимост", {
+            "fields": ("show_on_homepage", "order", "is_active"),
+        }),
+    )

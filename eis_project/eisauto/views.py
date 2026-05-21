@@ -1,4 +1,3 @@
-from django.views import generic as views
 
 from django.views.generic import TemplateView
 from .models import (
@@ -7,7 +6,6 @@ from .models import (
     HomeBenefit,
     Service,
     HomePromo,
-    Testimonial,
     Location,
 )
 
@@ -32,11 +30,6 @@ class HomeView(TemplateView):
         ).order_by("order")
 
         context["promo"] = HomePromo.objects.filter(is_active=True)
-
-        context["testimonials"] = Testimonial.objects.filter(
-            is_active=True,
-            show_on_homepage=True
-        ).order_by("order")[:4]
 
         context["locations"] = Location.objects.filter(
             is_active=True,

@@ -53,10 +53,20 @@ class HomeHero(models.Model):
 class HomeBenefit(models.Model):
     title = models.CharField(max_length=100)
     description = models.CharField(max_length=180, blank=True)
+    icon_image = models.ImageField(
+        upload_to="home/benefits/",
+        blank=True,
+        null=True,
+        help_text=(
+            "Препоръчително: PNG или SVG, квадратно (1:1), "
+            "прозрачен фон, около 80×80 px, златист/жълт цвят (#ffc107). "
+            "Иконата се показва в кръгче 40×40 px."
+        ),
+    )
     icon = models.CharField(
         max_length=50,
         blank=True,
-        help_text="Example: bi-tools, bi-shield-check, bi-clock"
+        help_text="Резервен Bootstrap icon клас, напр.: bi-tools, bi-shield-check, bi-clock"
     )
     order = models.PositiveIntegerField(default=0)
     is_active = models.BooleanField(default=True)
@@ -107,29 +117,6 @@ class HomePromo(models.Model):
         return self.title
 
 
-class Testimonial(models.Model):
-    customer_name = models.CharField(max_length=100)
-    rating = models.PositiveSmallIntegerField(default=5)
-    text = models.TextField()
-
-    source = models.CharField(
-        max_length=50,
-        blank=True,
-        help_text="Example: Google, Facebook, Website"
-    )
-
-    show_on_homepage = models.BooleanField(default=True)
-    order = models.PositiveIntegerField(default=0)
-    is_active = models.BooleanField(default=True)
-
-    class Meta:
-        ordering = ["order"]
-        verbose_name = "Testimonial"
-        verbose_name_plural = "Testimonials"
-
-    def __str__(self):
-        return f"{self.customer_name} - {self.rating}/5"
-
 
 class Location(models.Model):
     name = models.CharField(max_length=120)
@@ -141,13 +128,19 @@ class Location(models.Model):
         default="ВСЕКИ ДЕН"
     )
     working_hours = models.TextField(blank=True)
-
     google_maps_url = models.URLField(
         help_text="Direct Google Maps link. Opens when user clicks button.",
         max_length=1000
     )
-    google_maps_embed_url = models.URLField(
-        help_text="Google Maps iframe embed URL."
+    google_maps_embed = models.TextField(
+        blank=True,
+        help_text=(
+            "Постави Google Maps embed кода тук. "
+            "Как: отвори Google Maps → намери мястото → бутон „Сподели"
+            "(Share) → раздел „Вграждане на карта" 
+            "копирай HTML и го постави цял тук. "
+            "Може да поставиш и само линка от „Сподели → Копирай линк"
+        ),
     )
 
     show_on_homepage = models.BooleanField(default=True)
@@ -161,3 +154,45 @@ class Location(models.Model):
 
     def __str__(self):
         return self.name
+
+    @property
+    def embed_url(self):
+        """Return the URL to use as the iframe `src`.
+
+        Accepts either:
+          - a full <iframe …src="…"…></iframe> snippet (we extract the src), or
+          - a bare URL (we return it as-is).
+        """
+        import re
+
+        value = (self.google_maps_embed or "").strip()
+        if not value:
+            return ""
+
+        match = re.search(r'src=["\']([^"\']+)["\']', value)
+        if match:
+            return match.group(1)
+        return value
+
+    @property
+    def maps_url(self):
+        """Link for the „Виж в Google Maps" button.
+
+        Extracts coordinates from the embed URL's `pb` parameter
+        (format: …!2d{lng}!3d{lat}…) and builds a clean search URL
+        that opens a normal Google Maps page with a pin at that point.
+
+        Falls back to the embed URL itself if coords can't be parsed.
+        """
+        import re
+
+        url = self.embed_url
+        if not url:
+            return ""
+
+        # Embed pb format encodes longitude as !2d… and latitude as !3d…
+        m = re.search(r"!2d(-?\d+\.\d+)!3d(-?\d+\.\d+)", url)
+        if m:
+            lng, lat = m.group(1), m.group(2)
+            return f"https://www.google.com/maps/search/?api=1&query={lat}%2C{lng}"
+        return url
