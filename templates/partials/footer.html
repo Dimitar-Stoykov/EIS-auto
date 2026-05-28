@@ -1,20 +1,17 @@
 <footer>
     <div class="container">
 
-        <div class="row g-4">
+        <div class="row g-3 py-3">
 
             <!-- Company -->
             <div class="col-lg-3 col-md-6">
-                <div class="d-flex align-items-center gap-2 mb-3">
-
-
-                    <div class="brand-icon" style="width:38px;height:38px;font-size:.85rem;">{{ site.company_name }}</div>
-
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <div class="brand-icon" style="width:34px;height:34px;font-size:.78rem;">{{ site.company_name }}</div>
                     <div class="brand-text-wrap">
                         <span class="brand-sub">{{ site.business_type }}</span>
                     </div>
                 </div>
-                <p style="color:var(--white-50);font-size:.88rem;line-height:1.7;">
+                <p style="color:var(--white-50);font-size:.82rem;line-height:1.5;margin:0;">
                     Професионален автосервиз с модерна техника и опитни специалисти.
                 </p>
             </div>
@@ -37,10 +34,10 @@
             <!-- Working Hours -->
             <div class="col-lg-3 col-md-6">
                 <h5 class="footer-title">Работно Време</h5>
-                <p style="color:var(--gold);font-size:.78rem;font-weight:600;letter-spacing:.5px;margin-bottom:10px;">
+                <p style="color:var(--gold);font-size:.75rem;font-weight:600;letter-spacing:.5px;margin-bottom:5px;">
                     {{ location.working_hours_text }}
                 </p>
-                <p style="color:var(--white-50);font-size:.85rem;line-height:1.8;">
+                <p style="color:var(--white-50);font-size:.82rem;line-height:1.5;margin:0;">
                     🕘 {{ location.working_hours|linebreaksbr }}
                 </p>
             </div>
@@ -48,7 +45,6 @@
             <!-- Contacts -->
             <div class="col-lg-4 col-md-6">
                 <h5 class="footer-title">Контакти</h5>
-
                 <ul class="list-unstyled footer-contact">
                     <li>
                         <span class="footer-contact__icon">📍</span>
@@ -59,13 +55,12 @@
                         <a href="tel:{{ location.phone }}">{{ location.phone }}</a>
                     </li>
                     {% if site.email %}
-                        <li>
-                            <span class="footer-contact__icon">✉</span>
-                            <a href="mailto:{{ site.email }}">{{ site.email }}</a>
-                        </li>
+                    <li>
+                        <span class="footer-contact__icon">✉</span>
+                        <a href="mailto:{{ site.email }}">{{ site.email }}</a>
+                    </li>
                     {% endif %}
                 </ul>
-
             </div>
 
             {% endwith %}
@@ -74,10 +69,10 @@
 
         <hr class="footer-divider">
 
-        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-2"
-             style="color:var(--white-50);font-size:.8rem;">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-2 pb-2"
+             style="color:var(--white-50);font-size:.78rem;">
             <span>© {{ site.company_name }} {{ site.business_type }}. Всички права запазени.</span>
-            <span style="color:rgba(255,255,255,.25);">София, България</span>
+            <span style="color:rgba(255,255,255,.2);">София, България</span>
         </div>
 
     </div>

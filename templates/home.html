@@ -93,6 +93,13 @@
                 <i class="bi bi-chevron-right"></i>
             </button>
         </div>
+
+        <div style="text-align:center;margin-top:32px;">
+            <a href="/prices/" class="btn-gold">
+                <i class="bi bi-tag"></i>
+                Виж цените
+            </a>
+        </div>
     </div>
 </section>
 
@@ -240,7 +247,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function applyTransform(animated) {
-        track.style.transition = animated ? 'transform 0.55s cubic-bezier(0.4, 0, 0.2, 1)' : 'none';
+        track.style.transition = animated ? 'transform 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94)' : 'none';
         track.style.transform = 'translateX(-' + (current * cardStep()) + 'px)';
     }
 
@@ -254,11 +261,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 current = 0;
                 applyTransform(false);
                 isResetting = false;
-            }, 580);
+            }, 950);
         }
     }
 
-    var autoTimer = setInterval(advance, 3000);
+    var autoTimer = setInterval(advance, 5000);
 
     const btnPrev = document.querySelector('[data-svc-prev]');
     const btnNext = document.querySelector('[data-svc-next]');
