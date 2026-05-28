@@ -13,6 +13,21 @@ from .models import (
 class SiteSettingsAdmin(admin.ModelAdmin):
     list_display = ("company_name", "phone", "email")
     search_fields = ("company_name", "phone", "email")
+    fieldsets = (
+        (None, {
+            "fields": ("company_name", "business_type"),
+        }),
+        ("Contacts", {
+            "fields": ("phone", "email", "address"),
+        }),
+        ("Social media", {
+            "fields": ("facebook_url", "instagram_url", "tiktok_url"),
+            "description": (
+                "Paste full profile URLs. Icons appear under the hero button. "
+                "Empty field = icon hidden."
+            ),
+        }),
+    )
 
 
 @admin.register(HomeHero)
@@ -64,9 +79,8 @@ class LocationAdmin(admin.ModelAdmin):
         ("Google Maps", {
             "fields": ("google_maps_embed", "google_maps_url"),
             "description": (
-                "Отвори Google Maps → намери мястото → бутон „Сподели" 
-                "→ „Вграждане на карта" 
-                "Готово — картата ще се покаже на сайта."
+                "Embed: Share -> Embed a map -> Copy HTML. "
+                "URL: Share -> Send a link -> Copy."
             ),
         }),
         ("Видимост", {

@@ -1,7 +1,5 @@
 from django.db import models
 
-from django.db import models
-
 
 class SiteSettings(models.Model):
     company_name = models.CharField(max_length=120)
@@ -19,6 +17,7 @@ class SiteSettings(models.Model):
 
     facebook_url = models.URLField(blank=True)
     instagram_url = models.URLField(blank=True)
+    tiktok_url = models.URLField(blank=True)
 
     class Meta:
         verbose_name = "Site Settings"
@@ -84,6 +83,12 @@ class Service(models.Model):
     title = models.CharField(max_length=120)
     short_description = models.TextField()
     image = models.ImageField(upload_to="services/", blank=True, null=True)
+    icon = models.CharField(
+        max_length=60,
+        blank=True,
+        default="bi-tools",
+        help_text="Bootstrap Icons клас, напр. bi-tools, bi-speedometer2, bi-wrench, bi-droplet"
+    )
     starting_price = models.CharField(max_length=50, blank=True)
 
     show_on_homepage = models.BooleanField(default=True)
@@ -128,18 +133,19 @@ class Location(models.Model):
         default="ВСЕКИ ДЕН"
     )
     working_hours = models.TextField(blank=True)
-    google_maps_url = models.URLField(
-        help_text="Direct Google Maps link. Opens when user clicks button.",
-        max_length=1000
-    )
     google_maps_embed = models.TextField(
         blank=True,
         help_text=(
-            "Постави Google Maps embed кода тук. "
-            "Как: отвори Google Maps → намери мястото → бутон „Сподели"
-            "(Share) → раздел „Вграждане на карта" 
-            "копирай HTML и го постави цял тук. "
-            "Може да поставиш и само линка от „Сподели → Копирай линк"
+            "Embed код за картата (iframe HTML). "
+            "Google Maps -> Share -> Embed a map -> Copy HTML -> постави тук."
+        ),
+    )
+    google_maps_url = models.URLField(
+        blank=True,
+        max_length=1000,
+        help_text=(
+            "Линк за бутона под картата. "
+            "Google Maps -> Share -> Send a link -> Copy -> постави тук."
         ),
     )
 
@@ -176,21 +182,22 @@ class Location(models.Model):
 
     @property
     def maps_url(self):
-        """Link for the „Виж в Google Maps" button.
+        """Link for the button below the map.
 
-        Extracts coordinates from the embed URL's `pb` parameter
-        (format: …!2d{lng}!3d{lat}…) and builds a clean search URL
-        that opens a normal Google Maps page with a pin at that point.
-
-        Falls back to the embed URL itself if coords can't be parsed.
+        Priority:
+          1) The explicit `google_maps_url` field (recommended).
+          2) Coords parsed from the embed URL's `pb` parameter.
+          3) The embed URL itself as a last resort.
         """
         import re
+
+        if self.google_maps_url:
+            return self.google_maps_url
 
         url = self.embed_url
         if not url:
             return ""
 
-        # Embed pb format encodes longitude as !2d… and latitude as !3d…
         m = re.search(r"!2d(-?\d+\.\d+)!3d(-?\d+\.\d+)", url)
         if m:
             lng, lat = m.group(1), m.group(2)

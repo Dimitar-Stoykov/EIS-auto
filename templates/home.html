@@ -2,223 +2,173 @@
 
 {% block content %}
 
-<!-- ======================================================
-     HERO SECTION
-     ====================================================== -->
-<section class="hero-section"
-         style="background-image: url('{{ hero.hero_image.url }}');">
-    <div class="container py-5">
-        <div class="row align-items-center min-vh-75">
+<section class="home-hero" style="background-image: url('{{ hero.hero_image.url }}');">
+    <div class="container">
+        <div class="home-hero__grid">
+            <div class="home-hero__copy">
+                <p class="section-eyebrow">{{ hero.badge_text }}</p>
 
-            <!-- Left: copy -->
-            <div class="col-lg-7">
-
-                <p class="hero-eyebrow">{{ hero.badge_text }}</p>
-
-                <h1 class="hero-title">
-                    {{ hero.title }}
-                </h1>
-                 <h1 class="hero-title">
-                    {{ hero.title_second }}
+                <h1 class="home-hero__title">
+                    <span>{{ hero.title }}</span>
+                    <strong>{{ hero.title_second }}</strong>
                 </h1>
 
-                <p class="hero-subtitle">
-                    {{ hero.subtitle }}
-                </p>
+                <p class="home-hero__subtitle">{{ hero.subtitle }}</p>
 
-                <div class="d-flex flex-wrap gap-3 mt-4">
+                <div class="home-hero__actions">
+                    <a href="tel:{{ site.phone }}" class="btn-gold">
+                        <i class="bi bi-calendar2-check"></i>
+                        Запази час
+                    </a>
                     <a href="{{ hero.secondary_button_link }}" class="btn-outline-gold">
-                        {{ hero.secondary_button_text }} →
+                        Виж услугите <i class="bi bi-arrow-right"></i>
                     </a>
                 </div>
 
-                <!-- Benefits row -->
-                <div class="hero-benefits">
-                    <div class="row g-3">
-                        {% for benefit in benefits %}
-                            <div class="col-6 col-md-3 benefit-item">
-                                <div class="benefit-icon">
-                                    {% if benefit.icon_image %}
-                                        <img src="{{ benefit.icon_image.url }}"
-                                             alt="{{ benefit.title }}"
-                                             class="benefit-icon-img">
-                                    {% elif benefit.icon %}
-                                        <i class="bi {{ benefit.icon }}" style="color:#ffc107;font-size:1.1rem;"></i>
-                                    {% else %}
-                                        <!-- Default gear icon fallback -->
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
-                                             viewBox="0 0 24 24" fill="none" stroke="#ffc107"
-                                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                            <circle cx="12" cy="12" r="3"/>
-                                            <path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/>
-                                        </svg>
-                                    {% endif %}
-                                </div>
-                                <div class="benefit-text">
-                                    <div class="benefit-title">{{ benefit.title }}</div>
-                                    <div class="benefit-desc">{{ benefit.description }}</div>
-                                </div>
-                            </div>
-                        {% endfor %}
-                    </div>
+                {% if site.facebook_url or site.instagram_url or site.tiktok_url %}
+                <div class="hero-social">
+                    {% if site.facebook_url %}
+                        <a href="{{ site.facebook_url }}" target="_blank" rel="noopener" class="hero-social__link" aria-label="Facebook">
+                            <i class="bi bi-facebook"></i>
+                        </a>
+                    {% endif %}
+                    {% if site.instagram_url %}
+                        <a href="{{ site.instagram_url }}" target="_blank" rel="noopener" class="hero-social__link" aria-label="Instagram">
+                            <i class="bi bi-instagram"></i>
+                        </a>
+                    {% endif %}
+                    {% if site.tiktok_url %}
+                        <a href="{{ site.tiktok_url }}" target="_blank" rel="noopener" class="hero-social__link" aria-label="TikTok">
+                            <i class="bi bi-tiktok"></i>
+                        </a>
+                    {% endif %}
                 </div>
-
+                {% endif %}
             </div>
 
-            <!-- Right: working hours badge -->
-            <div class="col-lg-5 d-none d-lg-flex justify-content-end align-items-center">
+            <div class="home-hero__badge-wrap">
                 <div class="working-badge">
                     <div class="badge-label">
-                        <!-- Clock icon -->
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
-                             viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                             stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="10"/>
-                            <polyline points="12 6 12 12 16 14"/>
-                        </svg>
+                        <i class="bi bi-clock"></i>
                         {{ locations.first.working_hours_text }}
                     </div>
                     <div class="badge-hours">{{ locations.first.working_hours }}</div>
                 </div>
             </div>
-
         </div>
     </div>
 </section>
 
-
-<!-- ======================================================
-     SERVICES SECTION
-     ====================================================== -->
-<section id="services" class="py-5 bg-site-dark">
+<section id="services" class="home-section home-section--services">
     <div class="container">
-
-        <div class="text-center mb-5">
+        <div class="home-section__heading">
             <p class="section-eyebrow">Нашите услуги</p>
-            <h2 class="section-title">Какво предлагаме</h2>
         </div>
 
-        <div class="row g-4">
-            {% for service in services %}
-                <div class="col-md-6 col-lg-4 col-xl-2">
-                    <div class="service-card h-100">
-
-                        {% if service.image %}
-                            <img src="{{ service.image.url }}"
-                                 class="service-img" alt="{{ service.title }}">
-                        {% endif %}
-
-                        <div class="p-3">
-                            <div class="service-icon">⚙</div>
-                            <h5 class="text-white fw-bold mt-2 mb-1"
-                                style="font-family:'Oswald',sans-serif;">
-                                {{ service.title }}
-                            </h5>
-                            <p class="mb-0" style="color:var(--white-50);font-size:.85rem;">
-                                {{ service.short_description }}
-                            </p>
+        <div class="service-slider-wrap">
+            <button class="service-slider-arrow service-slider-arrow--prev" data-svc-prev aria-label="Предишна услуга">
+                <i class="bi bi-chevron-left"></i>
+            </button>
+            <div class="service-strip" data-svc-track>
+                {% for service in service_cards %}
+                    <article class="service-card">
+                        <div class="service-card__image">
+                            {% if service.image_url %}
+                                <img src="{{ service.image_url }}" alt="{{ service.title }}">
+                            {% else %}
+                                <div class="service-card__image-placeholder"></div>
+                            {% endif %}
                         </div>
-
-                    </div>
-                </div>
-            {% endfor %}
+                        <div class="service-card__badge">
+                            <i class="bi {{ service.icon }}"></i>
+                        </div>
+                        <div class="service-card__body">
+                            <h3>{{ service.title }}</h3>
+                            <p>{{ service.description }}</p>
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+            <button class="service-slider-arrow service-slider-arrow--next" data-svc-next aria-label="Следваща услуга">
+                <i class="bi bi-chevron-right"></i>
+            </button>
         </div>
-
-        <div class="text-center mt-5">
-            <a href="/services/" class="btn-gold">Виж всички услуги →</a>
-        </div>
-
     </div>
 </section>
 
-
-<!-- ======================================================
-     PROMO / WHY US SECTION
-     ====================================================== -->
-{% if promo %}
-<section class="py-5 bg-site-dark">
+{% if promo_cards %}
+<section class="home-section home-section--promo">
     <div class="container">
-
-        <div class="text-center mb-5">
-            <p class="section-eyebrow">Промоции</p>
-            <h2 class="section-title">Актуални оферти</h2>
-        </div>
-
-        <div class="promo-grid">
-            {% for p in promo %}
-            <div class="promo-card {% if forloop.counter == 1 %}promo-card--featured{% endif %}">
-
-                <div class="promo-card__img">
-                    {% if p.image %}
-                        <img src="{{ p.image.url }}" alt="{{ p.title }}">
-                    {% endif %}
-                    <span class="promo-card__badge">{{ p.badge_text|default:"Промоция" }}</span>
-                </div>
-
-                <div class="promo-card__body">
-                    <h3 class="promo-card__title">{{ p.title }}</h3>
-                    <p class="promo-card__desc">{{ p.description }}</p>
-
-                    <div class="promo-card__footer">
-                        <a href="tel:{{ site.phone }}" class="promo-card__btn">
-                            {{ p.button_text|default:"Запази →" }}
-                        </a>
-                    </div>
-                </div>
-
+        <div class="home-section__heading home-section__heading--row">
+            <div>
+                <p class="section-eyebrow">Промоции</p>
+                <h2 class="section-title">Актуални оферти</h2>
             </div>
-            {% endfor %}
+            <div class="promo-slider__controls" aria-label="Promo controls">
+                <button type="button" class="promo-slider__arrow" data-promo-prev aria-label="Предишна промоция">
+                    <i class="bi bi-chevron-left"></i>
+                </button>
+                <button type="button" class="promo-slider__arrow" data-promo-next aria-label="Следваща промоция">
+                    <i class="bi bi-chevron-right"></i>
+                </button>
+            </div>
         </div>
 
+        <div class="promo-slider" data-promo-slider>
+            <div class="promo-track" data-promo-track>
+                {% for p in promo_cards %}
+                    <article class="promo-slide">
+                        <div class="promo-card">
+                            {% if p.image_url %}
+                                <img src="{{ p.image_url }}" alt="{{ p.title }}">
+                            {% endif %}
+                            <div class="promo-card__shade"></div>
+                            <span class="promo-card__badge">{{ p.badge }}</span>
+                            <div class="promo-card__body">
+                                <h3>{{ p.title }}</h3>
+                                <p>{{ p.description }}</p>
+                                <a href="{{ p.button_link }}" class="promo-card__btn">
+                                    Виж офертата <i class="bi bi-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+            <div class="promo-slider__dots" aria-hidden="true">
+                {% for p in promo_cards %}
+                    <span class="promo-slider__dot {% if forloop.counter == 1 %}is-active{% endif %}"></span>
+                {% endfor %}
+            </div>
+        </div>
     </div>
 </section>
 {% endif %}
 
-
-
-<section class="py-5 bg-site-dark">
-    <div class="container text-center">
-        <p class="section-eyebrow">Галерия</p>
-        <h2 class="section-title mb-4">Доверени марки</h2>
-        <div class="brand-row">
-            <span>AUDI</span>
-            <span>BMW</span>
-            <span>Mercedes</span>
-            <span>VW</span>
-            <span>Ford</span>
-            <span>Opel</span>
-            <span>Renault</span>
-            <span>Toyota</span>
-            <span>KIA</span>
-            <span>Hyundai</span>
-        </div>
-    </div>
-</section>
-
-
-<section class="py-5 bg-site-dark">
+<section class="home-section home-section--locations">
     <div class="container">
-
-        <div class="text-center mb-5">
-            <p class="section-eyebrow">Нашите обекти</p>
-            <h2 class="section-title">Посетете ни в София</h2>
+        <div class="home-section__heading">
+            <p class="section-eyebrow">Намерете ни</p>
         </div>
 
-        <div class="row g-4">
+        <div class="location-list">
             {% for location in locations %}
-                <div class="col-lg-4 {% if locations|length == 1 %}mx-auto{% endif %}">
-                    <div class="location-card h-100">
+                <article class="location-card location-card--map">
+                    <div class="location-card__content">
+                        <h3 class="location-card__title">{{ location.name }}</h3>
 
-                        <!-- Header -->
-                        <div class="p-3 pb-2">
-                            <h5 class="text-white fw-bold mb-1"
-                                style="font-family:'Oswald',sans-serif;">
-                                {{ location.name }}
-                            </h5>
-                            <small style="color:var(--gold);">{{ location.address }}</small>
+                        <div class="location-card__details">
+                            <p><i class="bi bi-geo-alt-fill"></i><span>{{ location.address }}</span></p>
+                            <p><i class="bi bi-telephone-fill"></i><span>{{ location.phone }}</span></p>
+                            <p><i class="bi bi-clock-fill"></i><span>{{ location.working_hours|linebreaksbr }}</span></p>
                         </div>
 
-                        <!-- Google Map embed (built from coordinates) -->
+                        <a href="{{ location.maps_url }}" target="_blank" rel="noopener" class="btn-gold location-card__btn">
+                            Виж в Google Maps <i class="bi bi-geo-alt"></i>
+                        </a>
+                    </div>
+
+                    <div class="location-card__map">
                         <iframe
                             src="{{ location.embed_url }}"
                             width="100%"
@@ -228,55 +178,158 @@
                             loading="lazy"
                             referrerpolicy="no-referrer-when-downgrade">
                         </iframe>
-
-                        <!-- Details -->
-                        <div class="p-4">
-                            <p class="mb-2" style="color:var(--white-50);font-size:.9rem;">
-                                📍 {{ location.address }}
-                            </p>
-                            <p class="mb-2" style="color:var(--white-50);font-size:.9rem;">
-                                📞 {{ location.phone }}
-                            </p>
-                            <p class="mb-4" style="color:var(--white-50);font-size:.9rem;">
-                                🕘 {{ location.working_hours|linebreaksbr }}
-                            </p>
-                            <a href="{{ location.google_maps_url }}"
-                               target="_blank"
-                               class="btn-outline-gold d-block text-center w-100">
-                                Виж в Google Maps
-                            </a>
-                        </div>
-
                     </div>
-                </div>
+                </article>
             {% endfor %}
         </div>
-
     </div>
 </section>
 
-
-<!-- ======================================================
-     HELP BANNER
-     ====================================================== -->
-<section class="py-4 bg-site-dark">
+{% if gallery_preview %}
+<section class="home-section home-section--gallery">
     <div class="container">
-        <div class="help-banner d-flex flex-column flex-lg-row
-                     justify-content-between align-items-center gap-3">
-            <div>
-                <h3 class="text-white fw-bold mb-1"
-                    style="font-family:'Oswald',sans-serif;">
-                    Нуждаете се от помощ?
-                </h3>
-                <p class="mb-0" style="color:var(--white-50);">
-                    Обадете се на {{ site.phone }} и запазете час още сега!
-                </p>
-            </div>
-            <a href="tel:{{ site.phone }}" class="btn-gold flex-shrink-0">
-                📞 {{ site.phone }}
+        <div class="home-section__heading home-section__heading--inline">
+            <p class="section-eyebrow">Галерия</p>
+            <h2 class="section-title">Последни моменти от сервиза</h2>
+        </div>
+
+        <div class="gallery-teaser">
+            {% for item in gallery_preview %}
+                <a href="/gallery/" class="gallery-teaser__item {% if forloop.counter == 1 %}gallery-teaser__item--featured{% endif %}">
+                    <img src="{{ item.image_url }}" alt="{{ item.title }}">
+                </a>
+            {% endfor %}
+        </div>
+
+        <div class="gallery-teaser__action">
+            <a href="/gallery/" class="btn-outline-gold">
+                <i class="bi bi-grid-3x3-gap"></i>
+                Виж цялата галерия
             </a>
         </div>
     </div>
 </section>
+{% endif %}
 
+{% endblock %}
+
+{% block extra_js %}
+<script>
+/* ── Services auto-rotating carousel ── */
+document.addEventListener('DOMContentLoaded', function () {
+    const track = document.querySelector('[data-svc-track]');
+    if (!track) return;
+
+    const cards = Array.from(track.children);
+    const visible = 4;
+    if (cards.length <= visible) return;
+
+    /* Clone cards for seamless infinite loop */
+    cards.forEach(function (card) {
+        track.appendChild(card.cloneNode(true));
+    });
+
+    let current = 0;
+    let isResetting = false;
+
+    function cardStep() {
+        const card = track.children[0];
+        const style = window.getComputedStyle(track);
+        const gap = parseFloat(style.gap || style.columnGap || 14);
+        return card.getBoundingClientRect().width + gap;
+    }
+
+    function applyTransform(animated) {
+        track.style.transition = animated ? 'transform 0.55s cubic-bezier(0.4, 0, 0.2, 1)' : 'none';
+        track.style.transform = 'translateX(-' + (current * cardStep()) + 'px)';
+    }
+
+    function advance() {
+        if (isResetting) return;
+        current++;
+        applyTransform(true);
+        if (current >= cards.length) {
+            isResetting = true;
+            setTimeout(function () {
+                current = 0;
+                applyTransform(false);
+                isResetting = false;
+            }, 580);
+        }
+    }
+
+    var autoTimer = setInterval(advance, 3000);
+
+    const btnPrev = document.querySelector('[data-svc-prev]');
+    const btnNext = document.querySelector('[data-svc-next]');
+
+    if (btnNext) {
+        btnNext.addEventListener('click', function () {
+            clearInterval(autoTimer);
+            advance();
+            autoTimer = setInterval(advance, 3000);
+        });
+    }
+
+    if (btnPrev) {
+        btnPrev.addEventListener('click', function () {
+            clearInterval(autoTimer);
+            if (current <= 0) {
+                current = cards.length - 1;
+                applyTransform(false);
+                setTimeout(function () {
+                    current--;
+                    applyTransform(true);
+                }, 20);
+            } else {
+                current--;
+                applyTransform(true);
+            }
+            autoTimer = setInterval(advance, 3000);
+        });
+    }
+});
+
+/* ── Promo slider ── */
+document.addEventListener('DOMContentLoaded', function () {
+    const slider = document.querySelector('[data-promo-slider]');
+    if (!slider) return;
+
+    const track = slider.querySelector('[data-promo-track]');
+    const prev = document.querySelector('[data-promo-prev]');
+    const next = document.querySelector('[data-promo-next]');
+    const dots = Array.from(slider.querySelectorAll('.promo-slider__dot'));
+
+    function slideAmount() {
+        const slide = track.querySelector('.promo-slide');
+        if (!slide) return track.clientWidth;
+        const styles = window.getComputedStyle(track);
+        const gap = parseFloat(styles.columnGap || styles.gap || 0);
+        return slide.getBoundingClientRect().width + gap;
+    }
+
+    function updateDots() {
+        if (!dots.length) return;
+        const index = Math.round(track.scrollLeft / slideAmount());
+        dots.forEach(function (dot, dotIndex) {
+            dot.classList.toggle('is-active', dotIndex === index);
+        });
+    }
+
+    if (prev) {
+        prev.addEventListener('click', function () {
+            track.scrollBy({ left: -slideAmount(), behavior: 'smooth' });
+        });
+    }
+
+    if (next) {
+        next.addEventListener('click', function () {
+            track.scrollBy({ left: slideAmount(), behavior: 'smooth' });
+        });
+    }
+
+    track.addEventListener('scroll', updateDots, { passive: true });
+    updateDots();
+});
+</script>
 {% endblock %}

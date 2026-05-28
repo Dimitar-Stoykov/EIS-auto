@@ -1,10 +1,8 @@
 <nav class="luxury-navbar navbar navbar-expand-lg navbar-dark">
     <div class="container">
-
-        <!-- Logo / Brand -->
         <a class="navbar-brand d-flex align-items-center gap-2" href="/">
             {% if site.logo %}
-                <img src="{{ site.logo.url }}" alt="{{ site.company_name }}" class="luxury-logo" style="height:48px;width:auto;object-fit:contain;">
+                <img src="{{ site.logo.url }}" alt="{{ site.company_name }}" class="luxury-logo">
             {% else %}
                 <div class="brand-icon">{{ site.company_name }}</div>
                 <div class="brand-text-wrap">
@@ -13,20 +11,16 @@
             {% endif %}
         </a>
 
-        <!-- Mobile toggle -->
         <button class="navbar-toggler border-0" type="button"
                 data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Меню">
             <span class="navbar-toggler-icon"></span>
         </button>
 
-        <!-- Menu -->
         <div class="collapse navbar-collapse" id="navbarNav">
-
             <ul class="navbar-nav mx-auto gap-1">
                 <li class="nav-item">
-                    <a class="nav-link luxury-link {% if request.path == home_page %}active{% endif %}"
-                       href="{{ home_page }}">Начало</a>
+                    <a class="nav-link luxury-link {% if request.path == home_page %}active{% endif %}" href="{{ home_page }}">Начало</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link luxury-link {% if '/about' in request.path %}active{% endif %}" href="/about/">За нас</a>
@@ -45,27 +39,16 @@
                 </li>
             </ul>
 
-            <!-- Right side -->
-            <div class="d-flex align-items-center gap-3 mt-3 mt-lg-0">
+            <div class="nav-actions">
                 <a href="tel:{{ site.phone }}" class="nav-phone">
-                    <!-- Phone icon -->
-                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
-                         fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07
-                                 A19.5 19.5 0 013.07 10.8 19.79 19.79 0 01.22 2.18
-                                 A2 2 0 012.18 0h3a2 2 0 012 1.72
-                                 c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91
-                                 a16 16 0 006.29 6.29l1.28-1.28a2 2 0 012.11-.45
-                                 c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/>
-                    </svg>
+                    <i class="bi bi-telephone"></i>
                     {{ site.phone }}
                 </a>
 
-                <a href="tel:{{ site.phone }}" class="luxury-btn d-none d-lg-inline-flex align-items-center gap-2">
+                <a href="tel:{{ site.phone }}" class="luxury-btn">
                     Запази час
                 </a>
             </div>
-
         </div>
     </div>
 </nav>
