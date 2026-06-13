@@ -1,0 +1,23 @@
+{% for item in items %}
+<article class="g-video-card">
+    <div class="g-video-card__thumb" data-video-url="{{ item.video_url }}">
+        {% if item.image_url %}
+            <img src="{{ item.image_url }}" alt="Видео" loading="lazy">
+        {% elif item.video_url %}
+            <video src="{{ item.video_url }}"
+                   preload="metadata"
+                   muted
+                   style="width:100%;height:100%;object-fit:cover;pointer-events:none;display:block;">
+            </video>
+        {% else %}
+            <div class="g-video-card__placeholder"></div>
+        {% endif %}
+        <button class="g-video-card__play" aria-label="Пусни">
+            <i class="bi bi-play-fill"></i>
+        </button>
+        {% if item.duration %}
+        <span class="g-video-card__dur">{{ item.duration }}</span>
+        {% endif %}
+    </div>
+</article>
+{% endfor %}

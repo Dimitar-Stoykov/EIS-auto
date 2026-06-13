@@ -1,0 +1,57 @@
+{% extends "admin/base_site.html" %}
+
+{% block title %}Качи видеа наведнъж{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">Начало</a> ›
+    <a href="{% url 'admin:eisauto_galleryitem_changelist' %}">Gallery Items</a> ›
+    Качи видеа наведнъж
+</div>
+{% endblock %}
+
+{% block content %}
+<h1>Качи видеа наведнъж</h1>
+
+{% if messages %}
+<ul class="messagelist">
+    {% for message in messages %}
+    <li class="{{ message.tags }}">{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<div class="module" style="padding: 20px; max-width: 600px;">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <fieldset class="module aligned">
+            <div class="form-row">
+                <label for="id_videos" style="font-weight: bold;">
+                    Изберете видео файлове (може да изберете няколко наведнъж):
+                </label>
+                <input
+                    type="file"
+                    name="videos"
+                    id="id_videos"
+                    accept="video/*"
+                    multiple
+                    style="margin-top: 8px; display: block;"
+                >
+                <p class="help" style="margin-top: 6px;">
+                    Задръжте <strong>Ctrl</strong> (или <strong>Cmd</strong> на Mac)
+                    за да изберете повече от едно видео.<br>
+                    След качването можете да редактирате всяко видео поотделно,
+                    за да добавите thumbnail, заглавие и описание.
+                </p>
+            </div>
+        </fieldset>
+
+        <div class="submit-row" style="margin-top: 16px;">
+            <input type="submit" value="Качи видеата" class="default">
+            <a href="{% url 'admin:eisauto_galleryitem_changelist' %}" style="margin-left: 12px;">
+                Откажи
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}

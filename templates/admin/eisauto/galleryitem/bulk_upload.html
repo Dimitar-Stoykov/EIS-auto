@@ -1,0 +1,56 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block title %}Качи снимки наведнъж{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">Начало</a> ›
+    <a href="{% url 'admin:eisauto_galleryitem_changelist' %}">Gallery Items</a> ›
+    Качи снимки наведнъж
+</div>
+{% endblock %}
+
+{% block content %}
+<h1>Качи снимки наведнъж</h1>
+
+{% if messages %}
+<ul class="messagelist">
+    {% for message in messages %}
+    <li class="{{ message.tags }}">{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<div class="module" style="padding: 20px; max-width: 600px;">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <fieldset class="module aligned">
+            <div class="form-row">
+                <label for="id_images" style="font-weight: bold;">
+                    Изберете снимки (може да изберете няколко наведнъж):
+                </label>
+                <input
+                    type="file"
+                    name="images"
+                    id="id_images"
+                    accept="image/*"
+                    multiple
+                    style="margin-top: 8px; display: block;"
+                >
+                <p class="help" style="margin-top: 6px;">
+                    Задръжте <strong>Ctrl</strong> (или <strong>Cmd</strong> на Mac)
+                    за да изберете повече от една снимка.
+                </p>
+            </div>
+        </fieldset>
+
+        <div class="submit-row" style="margin-top: 16px;">
+            <input type="submit" value="Качи снимките" class="default">
+            <a href="{% url 'admin:eisauto_galleryitem_changelist' %}" style="margin-left: 12px;">
+                Откажи
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}

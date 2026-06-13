@@ -1,0 +1,9 @@
+{% for item in items %}
+<a href="{{ item.image.url }}"
+   class="g-photo-item"
+   data-lightbox>
+    <img src="{{ item.image.url }}"
+         alt="Снимка от сервиза"
+         loading="lazy">
+</a>
+{% endfor %}

@@ -109,7 +109,6 @@
         <div class="home-section__heading home-section__heading--row">
             <div>
                 <p class="section-eyebrow">Промоции</p>
-                <h2 class="section-title">Актуални оферти</h2>
             </div>
             <div class="promo-slider__controls" aria-label="Promo controls">
                 <button type="button" class="promo-slider__arrow" data-promo-prev aria-label="Предишна промоция">
@@ -134,9 +133,6 @@
                             <div class="promo-card__body">
                                 <h3>{{ p.title }}</h3>
                                 <p>{{ p.description }}</p>
-                                <a href="{{ p.button_link }}" class="promo-card__btn">
-                                    Виж офертата <i class="bi bi-arrow-right"></i>
-                                </a>
                             </div>
                         </div>
                     </article>
@@ -226,6 +222,9 @@
 document.addEventListener('DOMContentLoaded', function () {
     const track = document.querySelector('[data-svc-track]');
     if (!track) return;
+
+    /* On tablet/mobile CSS scroll is used — JS carousel must not run */
+    if (window.innerWidth < 992) return;
 
     const cards = Array.from(track.children);
     const visible = 4;

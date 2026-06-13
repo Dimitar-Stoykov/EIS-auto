@@ -1,12 +1,19 @@
 
+import os
+import re
+import mimetypes
+from django.conf import settings
+from django.http import StreamingHttpResponse, FileResponse, Http404, JsonResponse
+from django.template.loader import render_to_string
 from django.views.generic import TemplateView
 from .models import (
     SiteSettings,
     HomeHero,
-    HomeBenefit,
     Service,
     HomePromo,
     Location,
+    GalleryItem,
+    GalleryPageSettings,
 )
 
 
@@ -19,10 +26,6 @@ class HomeView(TemplateView):
         context["site"] = SiteSettings.objects.first()
 
         context["hero"] = HomeHero.objects.filter(is_active=True).first()
-
-        context["benefits"] = HomeBenefit.objects.filter(
-            is_active=True
-        ).order_by("order")
 
         context["services"] = Service.objects.filter(
             is_active=True,
@@ -61,5 +64,143 @@ class HomeView(TemplateView):
             show_on_homepage=True
         ).order_by("order")
 
+        # Gallery preview on homepage (first 6 active images)
+        context["gallery_preview"] = GalleryItem.objects.filter(
+            is_active=True,
+            item_type=GalleryItem.TYPE_IMAGE,
+        ).order_by("-created_at")[:6]
 
         return context
+
+
+GALLERY_INITIAL_IMAGES = 8
+GALLERY_INITIAL_VIDEOS = 4
+GALLERY_PAGE_SIZE = 20
+
+
+class GalleryView(TemplateView):
+    template_name = "gallery.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["site"] = SiteSettings.objects.first()
+        context["locations"] = Location.objects.filter(is_active=True).order_by("order")
+
+        images_qs = GalleryItem.objects.filter(is_active=True, item_type=GalleryItem.TYPE_IMAGE).order_by("-created_at")
+        videos_qs = GalleryItem.objects.filter(is_active=True, item_type=GalleryItem.TYPE_VIDEO).order_by("-created_at")
+
+        context["gallery_images"]       = list(images_qs[:GALLERY_INITIAL_IMAGES])
+        context["gallery_images_total"] = images_qs.count()
+        context["gallery_videos"]       = list(videos_qs[:GALLERY_INITIAL_VIDEOS])
+        context["gallery_videos_total"] = videos_qs.count()
+        context["gallery_settings"]     = GalleryPageSettings.objects.first()
+        context["initial_images"]       = GALLERY_INITIAL_IMAGES
+        context["initial_videos"]       = GALLERY_INITIAL_VIDEOS
+        return context
+
+
+def gallery_more(request):
+    """AJAX endpoint — returns rendered HTML for the next batch of gallery items."""
+    item_type  = request.GET.get("type", "images")
+    offset     = max(int(request.GET.get("offset", 0)), 0)
+    limit      = GALLERY_PAGE_SIZE
+
+    if item_type == "images":
+        qs = GalleryItem.objects.filter(is_active=True, item_type=GalleryItem.TYPE_IMAGE).order_by("-created_at")
+        template = "partials/gallery_image_items.html"
+    else:
+        qs = GalleryItem.objects.filter(is_active=True, item_type=GalleryItem.TYPE_VIDEO).order_by("-created_at")
+        template = "partials/gallery_video_items.html"
+
+    total   = qs.count()
+    items   = list(qs[offset: offset + limit])
+    html    = render_to_string(template, {"items": items})
+    new_offset = offset + limit
+
+    return JsonResponse({"html": html, "has_more": new_offset < total})
+
+
+class _BaseView(TemplateView):
+    """Shared context for all simple pages."""
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["site"] = SiteSettings.objects.first()
+        context["locations"] = Location.objects.filter(is_active=True).order_by("order")
+        return context
+
+
+class AboutView(_BaseView):
+    template_name = "about.html"
+
+
+class ServicesView(_BaseView):
+    template_name = "services.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["services"] = Service.objects.filter(is_active=True).order_by("order")
+        return context
+
+
+class PricesView(_BaseView):
+    template_name = "prices.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["services"] = Service.objects.filter(is_active=True).order_by("order")
+        return context
+
+
+class ContactsView(_BaseView):
+    template_name = "contacts.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["locations"] = Location.objects.filter(is_active=True).order_by("order")
+        return context
+
+
+def stream_media(request, path):
+    """Serve media files with HTTP Range request support so videos can be seeked."""
+    file_path = os.path.join(settings.MEDIA_ROOT, path)
+
+    if not os.path.exists(file_path):
+        raise Http404
+
+    content_type, _ = mimetypes.guess_type(file_path)
+    content_type = content_type or "application/octet-stream"
+    file_size = os.path.getsize(file_path)
+
+    range_header = request.META.get("HTTP_RANGE", "").strip()
+    range_match = re.match(r"bytes=(\d+)-(\d*)", range_header) if range_header else None
+
+    if range_match:
+        first_byte = int(range_match.group(1))
+        last_byte = int(range_match.group(2)) if range_match.group(2) else file_size - 1
+        last_byte = min(last_byte, file_size - 1)
+        length = last_byte - first_byte + 1
+
+        def _iter_file(path, offset, size, chunk=8192):
+            with open(path, "rb") as f:
+                f.seek(offset)
+                remaining = size
+                while remaining > 0:
+                    data = f.read(min(chunk, remaining))
+                    if not data:
+                        break
+                    remaining -= len(data)
+                    yield data
+
+        response = StreamingHttpResponse(
+            _iter_file(file_path, first_byte, length),
+            status=206,
+            content_type=content_type,
+        )
+        response["Content-Range"] = f"bytes {first_byte}-{last_byte}/{file_size}"
+        response["Content-Length"] = str(length)
+    else:
+        response = FileResponse(open(file_path, "rb"), content_type=content_type)
+        response["Content-Length"] = str(file_size)
+
+    response["Accept-Ranges"] = "bytes"
+    return response

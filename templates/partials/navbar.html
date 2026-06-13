@@ -1,6 +1,6 @@
 <nav class="luxury-navbar navbar navbar-expand-lg navbar-dark">
     <div class="container">
-        <a class="navbar-brand d-flex align-items-center gap-2" href="/">
+        <a class="navbar-brand d-flex align-items-center gap-2" href="{% url 'home_page' %}">
             {% if site.logo %}
                 <img src="{{ site.logo.url }}" alt="{{ site.company_name }}" class="luxury-logo">
             {% else %}
@@ -20,22 +20,28 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav mx-auto gap-1">
                 <li class="nav-item">
-                    <a class="nav-link luxury-link {% if request.path == home_page %}active{% endif %}" href="{{ home_page }}">Начало</a>
+                    <a class="nav-link luxury-link {% if request.path == '/' %}active{% endif %}"
+                       href="{% url 'home_page' %}">Начало</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link luxury-link {% if '/about' in request.path %}active{% endif %}" href="/about/">За нас</a>
+                    <a class="nav-link luxury-link {% if '/about' in request.path %}active{% endif %}"
+                       href="{% url 'about' %}">За нас</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link luxury-link {% if '/services' in request.path %}active{% endif %}" href="/services/">Услуги</a>
+                    <a class="nav-link luxury-link {% if '/services' in request.path %}active{% endif %}"
+                       href="{% url 'services' %}">Услуги</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link luxury-link {% if '/prices' in request.path %}active{% endif %}" href="/prices/">Цени</a>
+                    <a class="nav-link luxury-link {% if '/prices' in request.path %}active{% endif %}"
+                       href="{% url 'prices' %}">Цени</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link luxury-link {% if '/gallery' in request.path %}active{% endif %}" href="/gallery/">Галерия</a>
+                    <a class="nav-link luxury-link {% if '/gallery' in request.path %}active{% endif %}"
+                       href="{% url 'gallery' %}">Галерия</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link luxury-link {% if '/contacts' in request.path %}active{% endif %}" href="/contacts/">Контакти</a>
+                    <a class="nav-link luxury-link {% if '/contacts' in request.path %}active{% endif %}"
+                       href="{% url 'contacts' %}">Контакти</a>
                 </li>
             </ul>
 
@@ -44,7 +50,6 @@
                     <i class="bi bi-telephone"></i>
                     {{ site.phone }}
                 </a>
-
                 <a href="tel:{{ site.phone }}" class="luxury-btn">
                     Запази час
                 </a>

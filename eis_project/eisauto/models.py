@@ -49,35 +49,6 @@ class HomeHero(models.Model):
         return self.title
 
 
-class HomeBenefit(models.Model):
-    title = models.CharField(max_length=100)
-    description = models.CharField(max_length=180, blank=True)
-    icon_image = models.ImageField(
-        upload_to="home/benefits/",
-        blank=True,
-        null=True,
-        help_text=(
-            "Препоръчително: PNG или SVG, квадратно (1:1), "
-            "прозрачен фон, около 80×80 px, златист/жълт цвят (#ffc107). "
-            "Иконата се показва в кръгче 40×40 px."
-        ),
-    )
-    icon = models.CharField(
-        max_length=50,
-        blank=True,
-        help_text="Резервен Bootstrap icon клас, напр.: bi-tools, bi-shield-check, bi-clock"
-    )
-    order = models.PositiveIntegerField(default=0)
-    is_active = models.BooleanField(default=True)
-
-    class Meta:
-        ordering = ["order"]
-        verbose_name = "Home Benefit"
-        verbose_name_plural = "Home Benefits"
-
-    def __str__(self):
-        return self.title
-
 
 class Service(models.Model):
     title = models.CharField(max_length=120)
@@ -121,6 +92,115 @@ class HomePromo(models.Model):
     def __str__(self):
         return self.title
 
+
+
+class GalleryPageSettings(models.Model):
+    """Hero image and stats for the Gallery page."""
+    hero_image = models.ImageField(
+        upload_to="gallery/hero/",
+        blank=True, null=True,
+        verbose_name="Hero снимка",
+        help_text="Снимката на колата вдясно в hero секцията.",
+    )
+
+    stat1_icon   = models.CharField(max_length=60, default="bi-tools",        verbose_name="Иконка 1", help_text="Bootstrap icon клас")
+    stat1_number = models.CharField(max_length=20, default="1500+",            verbose_name="Число 1")
+    stat1_label  = models.CharField(max_length=80, default="ремонтирани автомобила", verbose_name="Надпис 1")
+
+    stat2_icon   = models.CharField(max_length=60, default="bi-hand-thumbs-up", verbose_name="Иконка 2")
+    stat2_number = models.CharField(max_length=20, default="98%",               verbose_name="Число 2")
+    stat2_label  = models.CharField(max_length=80, default="доволни клиенти",   verbose_name="Надпис 2")
+
+    stat3_icon   = models.CharField(max_length=60, default="bi-award",          verbose_name="Иконка 3")
+    stat3_number = models.CharField(max_length=20, default="10+",               verbose_name="Число 3")
+    stat3_label  = models.CharField(max_length=80, default="години опит",       verbose_name="Надпис 3")
+
+    show_stats = models.BooleanField(
+        default=True,
+        verbose_name="Покажи статистики",
+        help_text="Скрийте статистиките ако не искате да се показват в hero секцията.",
+    )
+
+    class Meta:
+        verbose_name = "Gallery Page Settings"
+        verbose_name_plural = "Gallery Page Settings"
+
+    def __str__(self):
+        return "Gallery Page Settings"
+
+
+class GalleryItem(models.Model):
+    TYPE_IMAGE = "image"
+    TYPE_VIDEO = "video"
+    TYPE_CHOICES = [
+        (TYPE_IMAGE, "Снимка"),
+        (TYPE_VIDEO, "Видео"),
+    ]
+
+    item_type = models.CharField(
+        max_length=10,
+        choices=TYPE_CHOICES,
+        default=TYPE_IMAGE,
+        verbose_name="Тип",
+    )
+
+    # ── Image ──────────────────────────────────────────────
+    image = models.ImageField(
+        upload_to="gallery/images/",
+        blank=True,
+        null=True,
+        verbose_name="Снимка",
+        help_text="Качете снимка (JPG / PNG / WebP).",
+    )
+
+    # ── Video ──────────────────────────────────────────────
+    video_file = models.FileField(
+        upload_to="gallery/videos/",
+        blank=True,
+        null=True,
+        verbose_name="Видео файл",
+        help_text="MP4 файл.",
+    )
+    video_thumbnail = models.ImageField(
+        upload_to="gallery/thumbnails/",
+        blank=True,
+        null=True,
+        verbose_name="Thumbnail за видеото",
+        help_text="Снимка, която се показва преди пускане на видеото.",
+    )
+    duration = models.CharField(
+        max_length=10,
+        blank=True,
+        verbose_name="Продължителност",
+        help_text="Напр.: 1:25",
+    )
+
+    # ── Meta ───────────────────────────────────────────────
+    order = models.PositiveIntegerField(default=0)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Качено на")
+
+    class Meta:
+        ordering = ["-created_at"]
+        verbose_name = "Gallery Item"
+        verbose_name_plural = "Gallery Items"
+
+    def __str__(self):
+        return f"{self.get_item_type_display()} #{self.pk}"
+
+    @property
+    def image_url(self):
+        if self.item_type == self.TYPE_IMAGE and self.image:
+            return self.image.url
+        if self.item_type == self.TYPE_VIDEO and self.video_thumbnail:
+            return self.video_thumbnail.url
+        return ""
+
+    @property
+    def video_url(self):
+        if self.video_file:
+            return self.video_file.url
+        return ""
 
 
 class Location(models.Model):

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="home-hero" style="min-height:260px;background-color:#030c12;">
+    <div class="container">
+        <div style="padding-block:52px;">
+            <p class="section-eyebrow">Какво предлагаме</p>
+            <h1 class="home-hero__title" style="font-size:3rem;">Услуги</h1>
+        </div>
+    </div>
+</section>
+
+<section class="home-section">
+    <div class="container">
+        {% if services %}
+        <div class="service-strip" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:20px;overflow:visible;transform:none;">
+            {% for service in services %}
+            <article class="service-card" style="position:relative;">
+                <div class="service-card__image">
+                    {% if service.image %}
+                        <img src="{{ service.image.url }}" alt="{{ service.title }}">
+                    {% else %}
+                        <div class="service-card__image-placeholder"></div>
+                    {% endif %}
+                </div>
+                <div class="service-card__badge">
+                    <i class="bi {{ service.icon|default:'bi-tools' }}"></i>
+                </div>
+                <div class="service-card__body">
+                    <h3>{{ service.title }}</h3>
+                    <p>{{ service.short_description }}</p>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p style="color:var(--white-50);text-align:center;padding:60px 0;">
+            Все още няма добавени услуги.
+        </p>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

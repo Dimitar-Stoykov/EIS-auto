@@ -1,0 +1,364 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/gallery.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<!-- ══════════════════════════════════════════
+     HERO
+══════════════════════════════════════════ -->
+<section class="g-hero"
+    {% if gallery_settings and gallery_settings.hero_image %}
+        style="--hero-img: url('{{ gallery_settings.hero_image.url }}')"
+    {% endif %}>
+
+    <div class="g-hero__left">
+        <div class="g-hero__copy">
+            <p class="g-hero__eyebrow">Галерия</p>
+            <h1 class="g-hero__title">
+                Нашата работа<br>
+                <strong>в кадри</strong>
+            </h1>
+            <p class="g-hero__sub">
+                Разгледайте снимки и видеа от реални ремонти,<br>
+                поддръжка и грижа за вашия автомобил.
+            </p>
+
+            {% if gallery_settings and gallery_settings.show_stats %}
+            <div class="g-hero__stats">
+                <div class="g-hero__stat">
+                    <span class="g-hero__stat-icon"><i class="bi {{ gallery_settings.stat1_icon }}"></i></span>
+                    <div>
+                        <strong>{{ gallery_settings.stat1_number }}</strong>
+                        <span>{{ gallery_settings.stat1_label }}</span>
+                    </div>
+                </div>
+                <div class="g-hero__stat">
+                    <span class="g-hero__stat-icon"><i class="bi {{ gallery_settings.stat2_icon }}"></i></span>
+                    <div>
+                        <strong>{{ gallery_settings.stat2_number }}</strong>
+                        <span>{{ gallery_settings.stat2_label }}</span>
+                    </div>
+                </div>
+                <div class="g-hero__stat">
+                    <span class="g-hero__stat-icon"><i class="bi {{ gallery_settings.stat3_icon }}"></i></span>
+                    <div>
+                        <strong>{{ gallery_settings.stat3_number }}</strong>
+                        <span>{{ gallery_settings.stat3_label }}</span>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="g-hero__right"></div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     FILTER TABS
+══════════════════════════════════════════ -->
+<div class="g-tabs-bar">
+    <div class="g-tabs-inner">
+        <button class="g-tab is-active" data-filter="all">
+            <i class="bi bi-grid-3x3-gap-fill"></i> Всички
+        </button>
+        <button class="g-tab" data-filter="images">
+            <i class="bi bi-image"></i> Снимки
+        </button>
+        <button class="g-tab" data-filter="videos">
+            <i class="bi bi-play-circle"></i> Видеа
+        </button>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PHOTOS
+══════════════════════════════════════════ -->
+{% if gallery_images %}
+<section class="g-section" data-section="images">
+    <div class="g-section__container">
+        <h2 class="g-section__title">
+            <span class="g-section__bar"></span>
+            Снимки от нашата работа
+        </h2>
+
+        <div class="g-photo-grid" id="photoGrid">
+            {% for item in gallery_images %}
+            <a href="{{ item.image.url }}"
+               class="g-photo-item {% if forloop.first %}g-photo-item--big{% endif %}"
+               data-lightbox>
+                <img src="{{ item.image.url }}"
+                     alt="Снимка от сервиза"
+                     loading="lazy">
+            </a>
+            {% endfor %}
+        </div>
+
+        {% if gallery_images_total > initial_images %}
+        <div class="g-section__action">
+            <button class="g-btn-outline"
+                    id="showMorePhotos"
+                    data-offset="{{ initial_images }}"
+                    data-total="{{ gallery_images_total }}">
+                Покажи още снимки <i class="bi bi-arrow-right"></i>
+            </button>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endif %}
+
+<!-- ══════════════════════════════════════════
+     VIDEOS
+══════════════════════════════════════════ -->
+{% if gallery_videos %}
+<section class="g-section" data-section="videos">
+    <div class="g-section__container">
+        <h2 class="g-section__title">
+            <span class="g-section__bar"></span>
+            Видео от сервиза
+        </h2>
+
+        <div class="g-video-grid" id="videoGrid">
+            {% for item in gallery_videos %}
+            <article class="g-video-card">
+                <div class="g-video-card__thumb" data-video-url="{{ item.video_url }}">
+                    {% if item.image_url %}
+                        <img src="{{ item.image_url }}" alt="Видео" loading="lazy">
+                    {% elif item.video_url %}
+                        <video src="{{ item.video_url }}"
+                               preload="metadata"
+                               muted
+                               style="width:100%;height:100%;object-fit:cover;pointer-events:none;display:block;">
+                        </video>
+                    {% else %}
+                        <div class="g-video-card__placeholder"></div>
+                    {% endif %}
+                    <button class="g-video-card__play" aria-label="Пусни">
+                        <i class="bi bi-play-fill"></i>
+                    </button>
+                    {% if item.duration %}
+                    <span class="g-video-card__dur">{{ item.duration }}</span>
+                    {% endif %}
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+
+        {% if gallery_videos_total > initial_videos %}
+        <div class="g-section__action">
+            <button class="g-btn-outline"
+                    id="showMoreVideos"
+                    data-offset="{{ initial_videos }}"
+                    data-total="{{ gallery_videos_total }}">
+                Покажи още видеа <i class="bi bi-play-circle"></i>
+            </button>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endif %}
+
+{% if not gallery_images and not gallery_videos %}
+<section class="g-section">
+    <div class="g-section__container" style="text-align:center;padding:80px 0;color:#888;">
+        Все още липсват снимки в галерията ни, моля да ни извините!
+    </div>
+</section>
+{% endif %}
+
+<!-- ══════════════════════════════════════════
+     CTA
+══════════════════════════════════════════ -->
+<section class="g-cta">
+    <div class="g-cta__inner">
+        <div class="g-cta__icon"><i class="bi bi-calendar2-check"></i></div>
+        <div>
+            <h3 class="g-cta__title">Нуждаете се от помощ?</h3>
+            <p class="g-cta__sub">Запазете час за преглед и ние ще се погрижим за всичко.</p>
+        </div>
+        <a href="tel:{{ site.phone }}" class="g-cta__btn">Запази час</a>
+    </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     LIGHTBOX
+══════════════════════════════════════════ -->
+<div class="g-lightbox" id="lightbox" aria-hidden="true">
+    <button class="g-lightbox__close" id="lbClose"><i class="bi bi-x-lg"></i></button>
+    <button class="g-lightbox__prev"  id="lbPrev"><i class="bi bi-chevron-left"></i></button>
+    <button class="g-lightbox__next"  id="lbNext"><i class="bi bi-chevron-right"></i></button>
+    <img src="" alt="" id="lbImg">
+</div>
+
+<!-- ══════════════════════════════════════════
+     VIDEO MODAL
+══════════════════════════════════════════ -->
+<div class="g-vmodal" id="vModal" aria-hidden="true">
+    <div class="g-vmodal__bg" id="vModalBg"></div>
+    <div class="g-vmodal__inner">
+        <button class="g-vmodal__close" id="vModalClose"><i class="bi bi-x-lg"></i></button>
+        <video id="vPlayer" controls playsinline preload="none"></video>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+/* ── Filter tabs ── */
+(function(){
+    var tabs    = document.querySelectorAll('.g-tab');
+    var photos  = document.querySelector('[data-section="images"]');
+    var videos  = document.querySelector('[data-section="videos"]');
+    tabs.forEach(function(tab){
+        tab.addEventListener('click', function(){
+            tabs.forEach(function(t){ t.classList.remove('is-active'); });
+            tab.classList.add('is-active');
+            var f = tab.dataset.filter;
+            if(photos) photos.style.display = (f === 'videos') ? 'none' : '';
+            if(videos) videos.style.display = (f === 'images') ? 'none' : '';
+        });
+    });
+})();
+
+/* ── Lightbox ── */
+(function(){
+    var items = Array.from(document.querySelectorAll('[data-lightbox]'));
+    var lb    = document.getElementById('lightbox');
+    var img   = document.getElementById('lbImg');
+    var cur   = 0;
+    if(!lb || !items.length) return;
+
+    function open(i){ cur=i; img.src=items[i].href; lb.classList.add('is-open'); document.body.style.overflow='hidden'; }
+    function close(){ lb.classList.remove('is-open'); document.body.style.overflow=''; }
+
+    items.forEach(function(el,i){ el.addEventListener('click', function(e){ e.preventDefault(); open(i); }); });
+    document.getElementById('lbClose').addEventListener('click', close);
+    lb.addEventListener('click', function(e){ if(e.target===lb) close(); });
+    document.getElementById('lbPrev').addEventListener('click', function(){ open((cur-1+items.length)%items.length); });
+    document.getElementById('lbNext').addEventListener('click', function(){ open((cur+1)%items.length); });
+    document.addEventListener('keydown', function(e){
+        if(!lb.classList.contains('is-open')) return;
+        if(e.key==='Escape') close();
+        if(e.key==='ArrowLeft')  document.getElementById('lbPrev').click();
+        if(e.key==='ArrowRight') document.getElementById('lbNext').click();
+    });
+})();
+
+/* ── Video modal ── */
+(function(){
+    var modal  = document.getElementById('vModal');
+    var player = document.getElementById('vPlayer');
+    if(!modal || !player) return;
+
+    function bindVideoThumbs(container){
+        container.querySelectorAll('.g-video-card__thumb').forEach(function(thumb){
+            thumb.addEventListener('click', function(){
+                var url = thumb.dataset.videoUrl;
+                if(!url) return;
+                player.src = url;
+                player.load();
+                player.play();
+                modal.classList.add('is-open');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+    }
+    bindVideoThumbs(document);
+
+    function close(){
+        player.pause();
+        player.removeAttribute('src');
+        player.load();
+        modal.classList.remove('is-open');
+        document.body.style.overflow = '';
+    }
+    document.getElementById('vModalClose').addEventListener('click', close);
+    document.getElementById('vModalBg').addEventListener('click', close);
+    document.addEventListener('keydown', function(e){ if(e.key==='Escape') close(); });
+})();
+
+/* ── Load more ── */
+(function(){
+    var MORE_URL = '{% url "gallery_more" %}';
+
+    function setupLoadMore(btnId, gridId, type, lightboxRebind, videoRebind){
+        var btn  = document.getElementById(btnId);
+        var grid = document.getElementById(gridId);
+        if(!btn || !grid) return;
+
+        btn.addEventListener('click', function(){
+            var offset = parseInt(btn.dataset.offset, 10);
+            var total  = parseInt(btn.dataset.total, 10);
+            btn.disabled = true;
+            btn.textContent = 'Зареждане…';
+
+            fetch(MORE_URL + '?type=' + type + '&offset=' + offset)
+                .then(function(r){ return r.json(); })
+                .then(function(data){
+                    var tmp = document.createElement('div');
+                    tmp.innerHTML = data.html;
+                    while(tmp.firstChild){ grid.appendChild(tmp.firstChild); }
+
+                    if(lightboxRebind) lightboxRebind();
+                    if(videoRebind)    videoRebind(grid);
+
+                    btn.dataset.offset = offset + 20;
+                    if(data.has_more){
+                        btn.disabled = false;
+                        btn.innerHTML = (type === 'images')
+                            ? 'Покажи още снимки <i class="bi bi-arrow-right"></i>'
+                            : 'Покажи още видеа <i class="bi bi-play-circle"></i>';
+                    } else {
+                        btn.parentElement.style.display = 'none';
+                    }
+                });
+        });
+    }
+
+    /* Rebind lightbox after new images are appended */
+    function rebindLightbox(){
+        var items = Array.from(document.querySelectorAll('[data-lightbox]'));
+        var lb    = document.getElementById('lightbox');
+        var img   = document.getElementById('lbImg');
+        if(!lb || !items.length) return;
+        var cur = 0;
+        function open(i){ cur=i; img.src=items[i].href; lb.classList.add('is-open'); document.body.style.overflow='hidden'; }
+        function closeLb(){ lb.classList.remove('is-open'); document.body.style.overflow=''; }
+        items.forEach(function(el,i){
+            el.onclick = null;
+            el.addEventListener('click', function(e){ e.preventDefault(); open(i); });
+        });
+        document.getElementById('lbClose').onclick  = closeLb;
+        document.getElementById('lbPrev').onclick   = function(){ open((cur-1+items.length)%items.length); };
+        document.getElementById('lbNext').onclick   = function(){ open((cur+1)%items.length); };
+    }
+
+    /* Rebind video thumbs after new videos are appended */
+    function rebindVideos(container){
+        var modal  = document.getElementById('vModal');
+        var player = document.getElementById('vPlayer');
+        if(!modal || !player) return;
+        container.querySelectorAll('.g-video-card__thumb').forEach(function(thumb){
+            if(thumb.dataset.bound) return;
+            thumb.dataset.bound = '1';
+            thumb.addEventListener('click', function(){
+                var url = thumb.dataset.videoUrl;
+                if(!url) return;
+                player.src = url; player.load(); player.play();
+                modal.classList.add('is-open'); document.body.style.overflow='hidden';
+            });
+        });
+    }
+
+    setupLoadMore('showMorePhotos', 'photoGrid', 'images', rebindLightbox, null);
+    setupLoadMore('showMoreVideos',  'videoGrid',  'videos', null, rebindVideos);
+})();
+</script>
+{% endblock %}
