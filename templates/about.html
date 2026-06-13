@@ -1,20 +1,152 @@
 {% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/about.css' %}">
+{% endblock %}
 
 {% block content %}
-<section class="home-hero" style="min-height:260px;background-color:#030c12;">
-    <div class="container">
-        <div style="padding-block:52px;">
-            <p class="section-eyebrow">За нас</p>
-            <h1 class="home-hero__title" style="font-size:3rem;">За нас</h1>
+
+<!-- ══════════════════════════════════════════
+     HERO
+══════════════════════════════════════════ -->
+<section class="ab-hero">
+    <div class="ab-hero__watermark">{{ site.company_name|default:"EIS AUTO" }}</div>
+    <div class="ab-hero__inner">
+        <div class="ab-hero__eyebrow-wrap">
+            <span class="ab-hero__eyebrow-line"></span>
+            <p class="ab-hero__eyebrow">{{ about.eyebrow }}</p>
         </div>
+        <h1 class="ab-hero__title">
+            {% if about and about.hero_title %}
+                {{ about.hero_title }}
+            {% else %}
+                Кои сме<br><strong>ние</strong>
+            {% endif %}
+        </h1>
+        <div class="ab-hero__rule"></div>
+        {% if about and about.hero_subtitle %}
+        <p class="ab-hero__sub">{{ about.hero_subtitle }}</p>
+        {% endif %}
     </div>
 </section>
 
-<section class="home-section">
-    <div class="container">
-        <p style="color:var(--white-50);text-align:center;padding:60px 0;font-size:1.1rem;">
-            Страницата е в процес на изграждане.
-        </p>
+<!-- ══════════════════════════════════════════
+     BODY — description left / social right
+══════════════════════════════════════════ -->
+<div class="ab-body">
+    <div class="ab-body__inner {% if not site.facebook_url and not site.instagram_url and not site.tiktok_url %}ab-body__inner--full{% endif %}">
+
+        <!-- LEFT: company description -->
+        <div class="ab-left">
+            <div class="ab-content__label">
+                <span class="ab-content__bar"></span>
+                <h2 class="ab-content__title">{{ about.section_title|default:"За компанията" }}</h2>
+            </div>
+
+            <div class="ab-frame">
+                <span class="ab-frame__quote">&ldquo;</span>
+                <div class="ab-content__text">
+                    {% if about and about.description %}
+                        {% for para in about.description.splitlines %}
+                            {% if para %}<p>{{ para }}</p>{% endif %}
+                        {% endfor %}
+                    {% else %}
+                        <p>Добавете информация за компанията от администрацията.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if about and about.founded_year or about.address_detail %}
+            <div class="ab-meta">
+                {% if about.founded_year %}
+                <span class="ab-meta__pill">
+                    <i class="bi bi-calendar3"></i>
+                    Основана {{ about.founded_year }} г.
+                </span>
+                {% endif %}
+                {% if about.address_detail %}
+                <span class="ab-meta__pill">
+                    <i class="bi bi-geo-alt"></i>
+                    {{ about.address_detail }}
+                </span>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- RIGHT: social media (only when at least one link exists) -->
+        {% if site and site.facebook_url or site and site.instagram_url or site and site.tiktok_url %}
+        <aside class="ab-social">
+            <p class="ab-social__heading">Последвайте ни</p>
+            <p class="ab-social__sub">Следете ни в социалните мрежи за новини и актуални оферти.</p>
+
+            <ul class="ab-social__list">
+                {% if site.facebook_url %}
+                <li>
+                    <a href="{{ site.facebook_url }}" class="ab-social__link" target="_blank" rel="noopener">
+                        <span class="ab-social__icon ab-social__icon--fb">
+                            <i class="bi bi-facebook"></i>
+                        </span>
+                        <span>
+                            <span class="ab-social__name">Facebook</span>
+                            <span class="ab-social__handle">{{ site.company_name }}</span>
+                        </span>
+                        <i class="bi bi-arrow-right ab-social__arrow"></i>
+                    </a>
+                </li>
+                {% endif %}
+
+                {% if site.instagram_url %}
+                <li>
+                    <a href="{{ site.instagram_url }}" class="ab-social__link" target="_blank" rel="noopener">
+                        <span class="ab-social__icon ab-social__icon--ig">
+                            <i class="bi bi-instagram"></i>
+                        </span>
+                        <span>
+                            <span class="ab-social__name">Instagram</span>
+                            <span class="ab-social__handle">{{ site.company_name }}</span>
+                        </span>
+                        <i class="bi bi-arrow-right ab-social__arrow"></i>
+                    </a>
+                </li>
+                {% endif %}
+
+                {% if site.tiktok_url %}
+                <li>
+                    <a href="{{ site.tiktok_url }}" class="ab-social__link" target="_blank" rel="noopener">
+                        <span class="ab-social__icon ab-social__icon--tt">
+                            <i class="bi bi-tiktok"></i>
+                        </span>
+                        <span>
+                            <span class="ab-social__name">TikTok</span>
+                            <span class="ab-social__handle">{{ site.company_name }}</span>
+                        </span>
+                        <i class="bi bi-arrow-right ab-social__arrow"></i>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </aside>
+        {% endif %}
+
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     CTA
+══════════════════════════════════════════ -->
+<section class="ab-cta">
+    <div class="ab-cta__inner">
+        <div class="ab-cta__icon"><i class="bi bi-telephone"></i></div>
+        <div>
+            <h3 class="ab-cta__title">Свържете се с нас</h3>
+            <p class="ab-cta__sub">Готови сме да отговорим на всичките ви въпроси.</p>
+        </div>
+        <a href="tel:{{ site.phone }}" class="ab-cta__btn">
+            <i class="bi bi-telephone-fill"></i> Обади се
+        </a>
     </div>
 </section>
+
 {% endblock %}

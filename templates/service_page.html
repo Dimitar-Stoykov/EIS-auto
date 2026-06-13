@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/service_page.css' %}">
+{% endblock %}
+
+{% block content %}
+
+{# Resolve the icon per service type #}
+{% with type=service_page.service_type %}
+
+<!-- ══════════════════════════════════════════
+     PAGE HEADER
+══════════════════════════════════════════ -->
+<header class="sp-header">
+    <div class="sp-header__inner">
+
+        <!-- Icon badge -->
+        <div class="sp-header__badge">
+            {% if type == 'autoservice' %}
+                <i class="bi bi-wrench-adjustable"></i>
+            {% elif type == 'transport' %}
+                <i class="bi bi-truck"></i>
+            {% elif type == 'tires' %}
+                <i class="bi bi-disc"></i>
+            {% else %}
+                <i class="bi bi-tools"></i>
+            {% endif %}
+        </div>
+
+        <div class="sp-header__text">
+            <!-- Breadcrumb -->
+            <nav class="sp-header__crumb" aria-label="breadcrumb">
+                <a href="{% url 'home_page' %}">Начало</a>
+                <span class="sp-header__crumb-sep"><i class="bi bi-chevron-right"></i></span>
+                <span class="sp-header__crumb-current">{{ service_page.get_service_type_display }}</span>
+            </nav>
+
+            <!-- Title -->
+            <h1 class="sp-header__title">
+                {{ service_page.hero_title|default:service_page.get_service_type_display }}
+            </h1>
+            <div class="sp-header__rule"></div>
+
+            {% if service_page.hero_subtitle %}
+            <p class="sp-header__sub">{{ service_page.hero_subtitle }}</p>
+            {% endif %}
+        </div>
+    </div>
+</header>
+
+<!-- ══════════════════════════════════════════
+     BODY
+══════════════════════════════════════════ -->
+<section class="sp-body">
+    <div class="sp-body__grid {% if not site.phone and not service_page.address_detail and not site.facebook_url and not site.instagram_url and not site.tiktok_url %}sp-body__grid--full{% endif %}">
+
+        <!-- LEFT: description -->
+        <div class="sp-main">
+
+            {% if service_page.section_title %}
+            <div class="sp-section-label">
+                <span class="sp-section-label__bar"></span>
+                <h2 class="sp-section-label__title">{{ service_page.section_title }}</h2>
+            </div>
+            {% endif %}
+
+            <div class="sp-description">
+                {% if service_page.description %}
+                    {% for para in service_page.description.splitlines %}
+                        {% if para %}<p>{{ para }}</p>{% endif %}
+                    {% endfor %}
+                {% else %}
+                    <p>Добавете описание от администрацията.</p>
+                {% endif %}
+            </div>
+
+            {% if service_page.address_detail %}
+            <div class="sp-address">
+                <i class="bi bi-geo-alt-fill"></i>
+                {{ service_page.address_detail }}
+            </div>
+            {% endif %}
+
+        </div>
+
+        <!-- RIGHT: booking card -->
+        <aside class="sp-card">
+
+            <div class="sp-card__top">
+                <p class="sp-card__top-label">Свържете се с нас</p>
+                {% if site.phone %}
+                <a href="tel:{{ site.phone }}" class="sp-card__phone">{{ site.phone }}</a>
+                <a href="tel:{{ site.phone }}" class="sp-card__cta-btn">
+                    <i class="bi bi-telephone-fill"></i> Обади се сега
+                </a>
+                {% endif %}
+            </div>
+
+            <div class="sp-card__body">
+
+                {% if site.address %}
+                <hr class="sp-card__divider">
+                <div class="sp-card__info-row">
+                    <div class="sp-card__info-icon"><i class="bi bi-geo-alt"></i></div>
+                    <div>
+                        <span class="sp-card__info-label">Адрес</span>
+                        {{ site.address }}
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if site.email %}
+                <div class="sp-card__info-row">
+                    <div class="sp-card__info-icon"><i class="bi bi-envelope"></i></div>
+                    <div>
+                        <span class="sp-card__info-label">Имейл</span>
+                        <a href="mailto:{{ site.email }}" style="color:inherit;text-decoration:none;">{{ site.email }}</a>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if site.facebook_url or site.instagram_url or site.tiktok_url %}
+                <div class="sp-card__social-row">
+                    {% if site.facebook_url %}
+                    <a href="{{ site.facebook_url }}" class="sp-card__social-btn" target="_blank" rel="noopener">
+                        <i class="bi bi-facebook"></i> Facebook
+                    </a>
+                    {% endif %}
+                    {% if site.instagram_url %}
+                    <a href="{{ site.instagram_url }}" class="sp-card__social-btn" target="_blank" rel="noopener">
+                        <i class="bi bi-instagram"></i> Instagram
+                    </a>
+                    {% endif %}
+                    {% if site.tiktok_url %}
+                    <a href="{{ site.tiktok_url }}" class="sp-card__social-btn" target="_blank" rel="noopener">
+                        <i class="bi bi-tiktok"></i> TikTok
+                    </a>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+            </div>
+        </aside>
+
+    </div>
+</section>
+
+{% endwith %}
+{% endblock %}

@@ -7,6 +7,8 @@ from django.http import StreamingHttpResponse, FileResponse, Http404, JsonRespon
 from django.template.loader import render_to_string
 from django.views.generic import TemplateView
 from .models import (
+    AboutPage,
+    ServicePage,
     SiteSettings,
     HomeHero,
     Service,
@@ -129,8 +131,30 @@ class _BaseView(TemplateView):
         return context
 
 
+class ServicePageView(_BaseView):
+    template_name = "service_page.html"
+
+    def get(self, request, service_type, **kwargs):
+        from django.http import Http404
+        try:
+            page = ServicePage.objects.get(service_type=service_type, is_active=True)
+        except ServicePage.DoesNotExist:
+            raise Http404
+        return self.render_to_response(self.get_context_data(page=page))
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['service_page'] = kwargs.get('page')
+        return context
+
+
 class AboutView(_BaseView):
     template_name = "about.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["about"] = AboutPage.objects.first()
+        return context
 
 
 class ServicesView(_BaseView):

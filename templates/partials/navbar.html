@@ -27,10 +27,33 @@
                     <a class="nav-link luxury-link {% if '/about' in request.path %}active{% endif %}"
                        href="{% url 'about' %}">За нас</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link luxury-link {% if '/services' in request.path %}active{% endif %}"
-                       href="{% url 'services' %}">Услуги</a>
-                </li>
+                {% if nav_service_pages %}
+                    {% if nav_service_pages|length == 1 %}
+                    <li class="nav-item">
+                        <a class="nav-link luxury-link {% if '/services' in request.path %}active{% endif %}"
+                           href="{{ nav_service_pages.0.get_absolute_url }}">Услуги</a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link luxury-link luxury-dropdown-toggle {% if '/services' in request.path %}active{% endif %}"
+                           href="#" role="button"
+                           data-bs-toggle="dropdown"
+                           aria-expanded="false">
+                            Услуги <i class="bi bi-chevron-down luxury-chevron"></i>
+                        </a>
+                        <ul class="dropdown-menu luxury-dropdown-menu">
+                            {% for sp in nav_service_pages %}
+                            <li>
+                                <a class="dropdown-item luxury-dropdown-item {% if request.path == sp.get_absolute_url %}active{% endif %}"
+                                   href="{{ sp.get_absolute_url }}">
+                                    {{ sp.get_service_type_display|upper }}
+                                </a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                    {% endif %}
+                {% endif %}
                 <li class="nav-item">
                     <a class="nav-link luxury-link {% if '/prices' in request.path %}active{% endif %}"
                        href="{% url 'prices' %}">Цени</a>

@@ -1,6 +1,63 @@
 from django.db import models
 
 
+class AboutPage(models.Model):
+    """Content for the About page — edit once, reflected instantly."""
+
+    # Hero
+    eyebrow         = models.CharField(max_length=80,       verbose_name="Надпис над заглавието",blank=True)
+    hero_title      = models.CharField(max_length=160, default="Кои сме ние",  verbose_name="Заглавие")
+    hero_subtitle   = models.TextField(blank=True,                              verbose_name="Подзаглавие")
+
+    # Main body — left column
+    section_title   = models.CharField(max_length=160, default="За компанията", verbose_name="Заглавие на секцията")
+    description     = models.TextField(verbose_name="Описание на компанията",
+                                       help_text="Основният текст. Може да използвате празен ред за нов параграф.")
+    founded_year    = models.CharField(max_length=10, blank=True, verbose_name="Година на основаване",
+                                       help_text="Напр.: 2010")
+    address_detail  = models.CharField(max_length=255, blank=True, verbose_name="Адрес (за страницата)")
+
+    class Meta:
+        verbose_name        = "About Page"
+        verbose_name_plural = "About Page"
+
+    def __str__(self):
+        return "About Page"
+
+
+class ServicePage(models.Model):
+    TYPE_AUTOSERVICE = 'autoservice'
+    TYPE_TRANSPORT   = 'transport'
+    TYPE_TIRES       = 'tires'
+    TYPE_CHOICES = [
+        (TYPE_AUTOSERVICE, 'Автосервиз'),
+        (TYPE_TRANSPORT,   'Транспортни услуги'),
+        (TYPE_TIRES,       'Гумаджийница'),
+    ]
+
+    service_type   = models.CharField(max_length=20, choices=TYPE_CHOICES, unique=True, verbose_name="Тип услуга")
+    eyebrow        = models.CharField(max_length=80,  blank=True, verbose_name="Надпис над заглавието")
+    hero_title     = models.CharField(max_length=160,blank=True, verbose_name="Заглавие")
+    hero_subtitle  = models.TextField(blank=True, verbose_name="Подзаглавие")
+    section_title  = models.CharField(max_length=160, blank=True, verbose_name="Заглавие на секцията")
+    description    = models.TextField(verbose_name="Описание")
+    address_detail = models.CharField(max_length=255, blank=True, verbose_name="Адрес")
+    is_active      = models.BooleanField(default=True, verbose_name="Активна")
+    order          = models.PositiveIntegerField(default=0, verbose_name="Ред")
+
+    class Meta:
+        ordering = ['order']
+        verbose_name = "Страница услуга"
+        verbose_name_plural = "Страници услуги"
+
+    def __str__(self):
+        return self.get_service_type_display()
+
+    def get_absolute_url(self):
+        from django.urls import reverse
+        return reverse('service_page', args=[self.service_type])
+
+
 class SiteSettings(models.Model):
     company_name = models.CharField(max_length=120)
     business_type = models.CharField(

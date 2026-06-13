@@ -22,7 +22,13 @@
                 <ul class="list-unstyled footer-nav">
                     <li><a href="{% url 'home_page' %}">Начало</a></li>
                     <li><a href="{% url 'about' %}">За нас</a></li>
-                    <li><a href="{% url 'services' %}">Услуги</a></li>
+                    {% if nav_service_pages %}
+                    {% if nav_service_pages|length == 1 %}
+                    <li><a href="{{ nav_service_pages.0.get_absolute_url }}">Услуги</a></li>
+                    {% else %}
+                    <li><a href="{{ nav_service_pages.0.get_absolute_url }}">Услуги</a></li>
+                    {% endif %}
+                    {% endif %}
                     <li><a href="{% url 'prices' %}">Цени</a></li>
                     <li><a href="{% url 'gallery' %}">Галерия</a></li>
                     <li><a href="{% url 'contacts' %}">Контакти</a></li>

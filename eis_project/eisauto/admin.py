@@ -4,6 +4,8 @@ from django.shortcuts import redirect
 from django.contrib import messages
 from django.template.response import TemplateResponse
 from .models import (
+    AboutPage,
+    ServicePage,
     SiteSettings,
     HomeHero,
     Service,
@@ -12,6 +14,37 @@ from .models import (
     GalleryItem,
     GalleryPageSettings,
 )
+
+
+@admin.register(ServicePage)
+class ServicePageAdmin(admin.ModelAdmin):
+    list_display  = ('__str__', 'service_type', 'is_active', 'order')
+    list_editable = ('is_active', 'order')
+    fieldsets = (
+        ("Тип и видимост", {
+            "fields": ("service_type", "is_active", "order"),
+        }),
+        ("Hero текст", {
+            "fields": ("eyebrow", "hero_title", "hero_subtitle"),
+        }),
+        ("Съдържание", {
+            "fields": ("section_title", "description", "address_detail"),
+            "description": "Социалните мрежи се взимат от Настройки на сайта.",
+        }),
+    )
+
+
+@admin.register(AboutPage)
+class AboutPageAdmin(admin.ModelAdmin):
+    fieldsets = (
+        ("Hero", {
+            "fields": ("eyebrow", "hero_title", "hero_subtitle"),
+        }),
+        ("Съдържание", {
+            "fields": ("section_title", "description", "founded_year", "address_detail"),
+            "description": "Социалните мрежи се взимат автоматично от Настройки на сайта.",
+        }),
+    )
 
 
 @admin.register(SiteSettings)
