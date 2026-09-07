@@ -20,11 +20,24 @@ SECRET_KEY = os.environ.get(
 )
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# os.environ values are always strings, so "False" must be compared as text —
+# otherwise DEBUG = "False" would be truthy and debug mode would stay on.
+DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = [
-    "localhost",
-    "127.0.0.1",
+    h.strip()
+    for h in os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+    if h.strip()
+]
+
+# Needed once the site sits behind HTTPS on a real domain — Django rejects
+# POST requests (admin login, the contact form) whose Origin isn't listed
+# here. Leave empty locally; set to e.g. "https://eisauto.com" in .env
+# when deploying.
+CSRF_TRUSTED_ORIGINS = [
+    o.strip()
+    for o in os.environ.get('CSRF_TRUSTED_ORIGINS', '').split(',')
+    if o.strip()
 ]
 
 # Site only has the admin login — send anyone Django would otherwise
@@ -81,11 +94,21 @@ WSGI_APPLICATION = 'eis_project.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
+# Defaults to the local sqlite file (unchanged) if no DB_* env vars are set.
+# Set these in .env to point at a real Postgres/MySQL server without
+# touching this file (e.g. when deploying).
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        # "or" (not .get's default=) on purpose: .env sets these keys to
+        # empty strings when unused, and .get() only falls back when the
+        # key is missing entirely, not when it's "" — "or" catches both.
+        'ENGINE': os.environ.get('DB_ENGINE') or 'django.db.backends.sqlite3',
+        'NAME': os.environ.get('DB_NAME') or str(BASE_DIR / 'db.sqlite3'),
+        'USER': os.environ.get('DB_USER', ''),
+        'PASSWORD': os.environ.get('DB_PASSWORD', ''),
+        'HOST': os.environ.get('DB_HOST', ''),
+        'PORT': os.environ.get('DB_PORT', ''),
     }
 }
 
