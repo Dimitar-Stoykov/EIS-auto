@@ -1,41 +1,135 @@
 {% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/prices.css' %}">
+{% endblock %}
 
 {% block content %}
-<section class="home-hero" style="min-height:260px;background-color:#030c12;">
-    <div class="container">
-        <div style="padding-block:52px;">
-            <p class="section-eyebrow">Прозрачно ценообразуване</p>
-            <h1 class="home-hero__title" style="font-size:3rem;">Цени</h1>
+
+<!-- ══════════════════════════════════════════
+     PAGE HEADER
+══════════════════════════════════════════ -->
+<header class="pr-header">
+    <div class="pr-header__inner">
+        <div class="pr-header__icon">
+            <i class="bi bi-tags"></i>
         </div>
+        <div>
+            <nav class="pr-header__crumb" aria-label="breadcrumb">
+                <a href="{% url 'home_page' %}">Начало</a>
+                <span><i class="bi bi-chevron-right" style="font-size:.6rem;"></i></span>
+                <span class="pr-header__crumb-current">Цени</span>
+            </nav>
+            <h1 class="pr-header__title">Ценоразпис</h1>
+            <div class="pr-header__rule"></div>
+            <p class="pr-header__sub">Актуални цени на нашите услуги</p>
+        </div>
+    </div>
+</header>
+
+<!-- ══════════════════════════════════════════
+     IMAGE GRID
+══════════════════════════════════════════ -->
+<section class="pr-body">
+    <div class="pr-body__inner">
+
+        {% if price_images %}
+        <div class="pr-grid" id="prGrid">
+            {% for item in price_images %}
+            <div class="pr-card" data-index="{{ forloop.counter0 }}" onclick="openLightbox({{ forloop.counter0 }})">
+                <img
+                    class="pr-card__img"
+                    src="{{ item.image.url }}"
+                    alt="{% if item.caption %}{{ item.caption }}{% else %}Ценова листа {{ forloop.counter }}{% endif %}"
+                    loading="lazy"
+                >
+                <div class="pr-card__zoom"><i class="bi bi-zoom-in"></i></div>
+                {% if item.caption %}
+                <div class="pr-card__caption">{{ item.caption }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+
+        {% else %}
+        <div class="pr-empty">
+            <i class="bi bi-tags pr-empty__icon"></i>
+            <p class="pr-empty__text">Цените ще бъдат добавени скоро</p>
+        </div>
+        {% endif %}
+
     </div>
 </section>
 
-<section class="home-section">
-    <div class="container">
-        {% if services %}
-        <table style="width:100%;border-collapse:collapse;">
-            <thead>
-                <tr style="border-bottom:1px solid rgba(255,193,7,.2);">
-                    <th style="text-align:left;padding:12px 16px;color:var(--gold);font-family:'Oswald',sans-serif;font-size:.85rem;letter-spacing:.8px;text-transform:uppercase;">Услуга</th>
-                    <th style="text-align:right;padding:12px 16px;color:var(--gold);font-family:'Oswald',sans-serif;font-size:.85rem;letter-spacing:.8px;text-transform:uppercase;">Цена от</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for service in services %}
-                <tr style="border-bottom:1px solid rgba(148,180,190,.08);">
-                    <td style="padding:14px 16px;color:var(--white);">{{ service.title }}</td>
-                    <td style="padding:14px 16px;color:var(--gold);text-align:right;font-weight:600;">
-                        {% if service.starting_price %}{{ service.starting_price }}{% else %}—{% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        {% else %}
-        <p style="color:var(--white-50);text-align:center;padding:60px 0;">
-            Цените ще бъдат добавени скоро.
-        </p>
-        {% endif %}
-    </div>
-</section>
+<!-- ══════════════════════════════════════════
+     LIGHTBOX
+══════════════════════════════════════════ -->
+{% if price_images %}
+<div class="pr-lightbox" id="prLightbox" role="dialog" aria-modal="true">
+    <button class="pr-lightbox__close" onclick="closeLightbox()" aria-label="Затвори">
+        <i class="bi bi-x-lg"></i>
+    </button>
+    <button class="pr-lightbox__prev" onclick="moveLightbox(-1)" aria-label="Предишна">
+        <i class="bi bi-chevron-left"></i>
+    </button>
+    <img class="pr-lightbox__img" id="prLightboxImg" src="" alt="">
+    <button class="pr-lightbox__next" onclick="moveLightbox(1)" aria-label="Следваща">
+        <i class="bi bi-chevron-right"></i>
+    </button>
+    <div class="pr-lightbox__counter" id="prCounter"></div>
+</div>
+
+<script>
+(function () {
+    const images = [
+        {% for item in price_images %}
+        {
+            src: "{{ item.image.url }}",
+            alt: "{% if item.caption %}{{ item.caption }}{% else %}Ценова листа {{ forloop.counter }}{% endif %}"
+        }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ];
+
+    let current = 0;
+    const lb    = document.getElementById('prLightbox');
+    const img   = document.getElementById('prLightboxImg');
+    const ctr   = document.getElementById('prCounter');
+
+    function show(i) {
+        current = (i + images.length) % images.length;
+        img.src = images[current].src;
+        img.alt = images[current].alt;
+        ctr.textContent = (current + 1) + ' / ' + images.length;
+    }
+
+    window.openLightbox = function (i) {
+        show(i);
+        lb.classList.add('is-open');
+        document.body.style.overflow = 'hidden';
+    };
+
+    window.closeLightbox = function () {
+        lb.classList.remove('is-open');
+        document.body.style.overflow = '';
+    };
+
+    window.moveLightbox = function (dir) { show(current + dir); };
+
+    /* Keyboard navigation */
+    document.addEventListener('keydown', function (e) {
+        if (!lb.classList.contains('is-open')) return;
+        if (e.key === 'Escape')      closeLightbox();
+        if (e.key === 'ArrowRight')  moveLightbox(1);
+        if (e.key === 'ArrowLeft')   moveLightbox(-1);
+    });
+
+    /* Click backdrop to close */
+    lb.addEventListener('click', function (e) {
+        if (e.target === lb) closeLightbox();
+    });
+})();
+</script>
+{% endif %}
+
 {% endblock %}

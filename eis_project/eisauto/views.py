@@ -3,9 +3,11 @@ import os
 import re
 import mimetypes
 from django.conf import settings
+from django.core.mail import EmailMessage
 from django.http import StreamingHttpResponse, FileResponse, Http404, JsonResponse
 from django.template.loader import render_to_string
 from django.views.generic import TemplateView
+from .forms import ContactForm
 from .models import (
     AboutPage,
     ServicePage,
@@ -16,6 +18,7 @@ from .models import (
     Location,
     GalleryItem,
     GalleryPageSettings,
+    PriceImage,
 )
 
 
@@ -171,17 +174,69 @@ class PricesView(_BaseView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["services"] = Service.objects.filter(is_active=True).order_by("order")
+        context["price_images"] = PriceImage.objects.filter(is_active=True).order_by("order", "-created_at")
         return context
 
 
 class ContactsView(_BaseView):
     template_name = "contacts.html"
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, form=None, **kwargs):
         context = super().get_context_data(**kwargs)
         context["locations"] = Location.objects.filter(is_active=True).order_by("order")
+        context["form"] = form or ContactForm()
         return context
+
+    def get(self, request, **kwargs):
+        return self.render_to_response(self.get_context_data())
+
+    def post(self, request, **kwargs):
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            d = form.cleaned_data
+            site = SiteSettings.objects.first()
+            # Recipient is always the email set in SiteSettings (admin).
+            site_email = (getattr(site, "email", "") or "").strip()
+            site_email = site_email or getattr(settings, "DEFAULT_CONTACT_EMAIL", "")
+
+            visitor_name = f"{d['first_name']} {d['last_name']}"
+
+            subject = f"Ново запитване от {visitor_name}"
+            body = (
+                f"Име: {visitor_name}\n"
+                f"Е-майл: {d['email']}\n"
+                f"Телефон: {d.get('phone') or '—'}\n\n"
+                f"Съобщение:\n{d['message']}"
+            )
+
+            sent = False
+            if site_email:
+                try:
+                    email = EmailMessage(
+                        subject=subject,
+                        body=body,
+                        # The technical From address must stay the authenticated
+                        # site mailbox (SMTP providers reject/override a spoofed
+                        # From), but the display name shows who filled the form.
+                        from_email=f"{visitor_name} <{site_email}>",
+                        to=[site_email],
+                        # Owner's mail client "Reply" button goes straight to
+                        # the visitor's real address.
+                        reply_to=[d["email"]],
+                    )
+                    email.send(fail_silently=False)
+                    sent = True
+                except Exception:
+                    sent = False
+
+            ctx = self.get_context_data(form=ContactForm())
+            ctx["form_sent"] = sent
+            ctx["form_error"] = not sent
+            return self.render_to_response(ctx)
+
+        ctx = self.get_context_data(form=form)
+        ctx["form_error"] = True
+        return self.render_to_response(ctx)
 
 
 def stream_media(request, path):

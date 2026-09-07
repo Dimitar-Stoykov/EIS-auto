@@ -1,47 +1,181 @@
 {% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/contacts.css' %}">
+{% endblock %}
 
 {% block content %}
-<section class="home-hero" style="min-height:260px;background-color:#030c12;">
-    <div class="container">
-        <div style="padding-block:52px;">
-            <p class="section-eyebrow">Свържете се с нас</p>
-            <h1 class="home-hero__title" style="font-size:3rem;">Контакти</h1>
+
+<!-- ══════════════════════════════════════════
+     PAGE HEADER
+══════════════════════════════════════════ -->
+<header class="ct-header">
+    <div class="ct-header__inner">
+        <div class="ct-header__icon">
+            <i class="bi bi-envelope-at"></i>
         </div>
+        <div>
+            <nav class="ct-header__crumb" aria-label="breadcrumb">
+                <a href="{% url 'home_page' %}">Начало</a>
+                <span><i class="bi bi-chevron-right" style="font-size:.6rem;"></i></span>
+                <span class="ct-header__crumb-current">Контакти</span>
+            </nav>
+            <h1 class="ct-header__title">Свържете се с нас</h1>
+            <div class="ct-header__rule"></div>
+            <p class="ct-header__sub">Готови сме да отговорим на всичките ви въпроси</p>
+        </div>
+    </div>
+</header>
+
+<!-- ══════════════════════════════════════════
+     BODY: info left / form right
+══════════════════════════════════════════ -->
+<section class="ct-body">
+    <div class="ct-body__grid">
+
+        <!-- LEFT: contact info cards -->
+        <div class="ct-info">
+
+            {% if site.phone %}
+            <div class="ct-info-card">
+                <div class="ct-info-card__icon"><i class="bi bi-telephone-fill"></i></div>
+                <div>
+                    <p class="ct-info-card__label">Телефон</p>
+                    <p class="ct-info-card__value">
+                        <a href="tel:{{ site.phone }}">{{ site.phone }}</a>
+                    </p>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if site.email %}
+            <div class="ct-info-card">
+                <div class="ct-info-card__icon"><i class="bi bi-envelope-fill"></i></div>
+                <div>
+                    <p class="ct-info-card__label">Е-майл</p>
+                    <p class="ct-info-card__value">
+                        <a href="mailto:{{ site.email }}">{{ site.email }}</a>
+                    </p>
+                </div>
+            </div>
+            {% endif %}
+
+            {% with loc=locations.0 %}
+            {% if loc.address %}
+            <div class="ct-info-card">
+                <div class="ct-info-card__icon"><i class="bi bi-geo-alt-fill"></i></div>
+                <div>
+                    <p class="ct-info-card__label">Адрес</p>
+                    <p class="ct-info-card__value">{{ loc.address }}</p>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if loc.working_hours %}
+            <div class="ct-info-card">
+                <div class="ct-info-card__icon"><i class="bi bi-clock-fill"></i></div>
+                <div>
+                    <p class="ct-info-card__label">Работно време</p>
+                    <p class="ct-info-card__value">{{ loc.working_hours|linebreaksbr }}</p>
+                </div>
+            </div>
+            {% endif %}
+            {% endwith %}
+
+        </div>
+
+        <!-- RIGHT: contact form -->
+        <div class="ct-form-wrap">
+            <h2 class="ct-form-title">Изпратете запитване</h2>
+            <p class="ct-form-sub">Изпратете съобщението си във формата по-долу и ние ще се свържем с Вас възможно най-рано.</p>
+
+            {% if form_sent %}
+            <div class="ct-banner ct-banner--success">
+                <i class="bi bi-check-circle-fill"></i>
+                Съобщението е изпратено успешно! Ще се свържем с вас скоро.
+            </div>
+            {% endif %}
+
+            {% if form_error and not form_sent %}
+            <div class="ct-banner ct-banner--error">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                Възникна грешка. Моля, проверете полетата и опитайте отново.
+            </div>
+            {% endif %}
+
+            <form method="post" novalidate>
+                {% csrf_token %}
+
+                <!-- Ime / Familiya -->
+                <div class="ct-form-row">
+                    <div class="ct-field">
+                        <label class="ct-label" for="id_first_name">Име *</label>
+                        <input class="ct-input {% if form.first_name.errors %}error{% endif %}"
+                               type="text" id="id_first_name" name="first_name"
+                               value="{{ form.first_name.value|default:'' }}"
+                               placeholder="Вашето име" required>
+                    </div>
+                    <div class="ct-field">
+                        <label class="ct-label" for="id_last_name">Фамилия *</label>
+                        <input class="ct-input {% if form.last_name.errors %}error{% endif %}"
+                               type="text" id="id_last_name" name="last_name"
+                               value="{{ form.last_name.value|default:'' }}"
+                               placeholder="Вашата фамилия" required>
+                    </div>
+                </div>
+
+                <!-- Email / Phone -->
+                <div class="ct-form-row">
+                    <div class="ct-field">
+                        <label class="ct-label" for="id_email">Е-майл *</label>
+                        <input class="ct-input {% if form.email.errors %}error{% endif %}"
+                               type="email" id="id_email" name="email"
+                               value="{{ form.email.value|default:'' }}"
+                               placeholder="example@mail.com" required>
+                    </div>
+                    <div class="ct-field">
+                        <label class="ct-label" for="id_phone">Телефон</label>
+                        <input class="ct-input"
+                               type="tel" id="id_phone" name="phone"
+                               value="{{ form.phone.value|default:'' }}"
+                               placeholder="+359 88 …">
+                    </div>
+                </div>
+
+                <!-- Message -->
+                <div class="ct-field" style="margin-bottom:0;">
+                    <label class="ct-label" for="id_message">Съобщение *</label>
+                    <textarea class="ct-input ct-textarea {% if form.message.errors %}error{% endif %}"
+                              id="id_message" name="message"
+                              placeholder="Опишете вашия въпрос или запитване…"
+                              rows="5" required>{{ form.message.value|default:'' }}</textarea>
+                </div>
+
+                <button type="submit" class="ct-submit">
+                    <i class="bi bi-send-fill"></i> Изпрати
+                </button>
+            </form>
+        </div>
+
     </div>
 </section>
 
-<section class="home-section home-section--locations">
-    <div class="container">
-        <div class="location-list">
-            {% for location in locations %}
-            <article class="location-card location-card--map">
-                <div class="location-card__content">
-                    <h3 class="location-card__title">{{ location.name }}</h3>
-                    <div class="location-card__details">
-                        <p><i class="bi bi-geo-alt-fill"></i><span>{{ location.address }}</span></p>
-                        <p><i class="bi bi-telephone-fill"></i><span>{{ location.phone }}</span></p>
-                        <p><i class="bi bi-clock-fill"></i><span>{{ location.working_hours|linebreaksbr }}</span></p>
-                    </div>
-                    <a href="{{ location.maps_url }}" target="_blank" rel="noopener" class="btn-gold location-card__btn">
-                        Виж в Google Maps <i class="bi bi-geo-alt"></i>
-                    </a>
-                </div>
-                <div class="location-card__map">
-                    <iframe
-                        src="{{ location.embed_url }}"
-                        width="100%" height="100%"
-                        style="border:0;display:block;"
-                        allowfullscreen="" loading="lazy"
-                        referrerpolicy="no-referrer-when-downgrade">
-                    </iframe>
-                </div>
-            </article>
-            {% empty %}
-            <p style="color:var(--white-50);text-align:center;padding:60px 0;">
-                Няма добавени локации.
-            </p>
-            {% endfor %}
-        </div>
-    </div>
-</section>
+<!-- ══════════════════════════════════════════
+     MAP (first active location)
+══════════════════════════════════════════ -->
+{% with loc=locations.0 %}
+{% if loc and loc.embed_url %}
+<div class="ct-map">
+    <iframe
+        src="{{ loc.embed_url }}"
+        allowfullscreen=""
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+        title="Карта на {{ loc.name }}">
+    </iframe>
+</div>
+{% endif %}
+{% endwith %}
+
 {% endblock %}

@@ -13,6 +13,7 @@ from .models import (
     Location,
     GalleryItem,
     GalleryPageSettings,
+    PriceImage,
 )
 
 
@@ -206,6 +207,51 @@ class GalleryItemAdmin(admin.ModelAdmin):
             "admin/eisauto/galleryitem/bulk_upload_videos.html",
             context,
         )
+
+
+@admin.register(PriceImage)
+class PriceImageAdmin(admin.ModelAdmin):
+    list_display  = ('__str__', 'order', 'is_active', 'created_at')
+    list_editable = ('order', 'is_active')
+    list_filter   = ('is_active',)
+
+    def get_urls(self):
+        urls = super().get_urls()
+        custom = [
+            path(
+                "bulk-upload/",
+                self.admin_site.admin_view(self.bulk_upload_view),
+                name="eisauto_priceimage_bulk_upload",
+            ),
+        ]
+        return custom + urls
+
+    def bulk_upload_view(self, request):
+        if request.method == "POST":
+            files = request.FILES.getlist("images")
+            if not files:
+                messages.error(request, "Не са избрани снимки.")
+            else:
+                for f in files:
+                    PriceImage.objects.create(image=f, is_active=True)
+                messages.success(request, f"Качени {len(files)} ценови снимки.")
+                return redirect("..")
+
+        context = {
+            **self.admin_site.each_context(request),
+            "title": "Качи ценови снимки наведнъж",
+            "opts": self.model._meta,
+        }
+        return TemplateResponse(
+            request,
+            "admin/eisauto/priceimage/bulk_upload.html",
+            context,
+        )
+
+    def changelist_view(self, request, extra_context=None):
+        extra_context = extra_context or {}
+        extra_context['bulk_upload_url'] = 'admin:eisauto_priceimage_bulk_upload'
+        return super().changelist_view(request, extra_context=extra_context)
 
 
 @admin.register(Location)

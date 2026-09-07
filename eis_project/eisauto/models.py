@@ -18,8 +18,8 @@ class AboutPage(models.Model):
     address_detail  = models.CharField(max_length=255, blank=True, verbose_name="Адрес (за страницата)")
 
     class Meta:
-        verbose_name        = "About Page"
-        verbose_name_plural = "About Page"
+        verbose_name        = "Страница Контакти"
+        verbose_name_plural = "Страница Контакти"
 
     def __str__(self):
         return "About Page"
@@ -31,7 +31,7 @@ class ServicePage(models.Model):
     TYPE_TIRES       = 'tires'
     TYPE_CHOICES = [
         (TYPE_AUTOSERVICE, 'Автосервиз'),
-        (TYPE_TRANSPORT,   'Транспортни услуги'),
+        (TYPE_TRANSPORT,   'Пътна помощ'),
         (TYPE_TIRES,       'Гумаджийница'),
     ]
 
@@ -77,8 +77,8 @@ class SiteSettings(models.Model):
     tiktok_url = models.URLField(blank=True)
 
     class Meta:
-        verbose_name = "Site Settings"
-        verbose_name_plural = "Site Settings"
+        verbose_name = "Настройки на сайта"
+        verbose_name_plural = "Настройки на сайта"
 
     def __str__(self):
         return f"{self.company_name} {self.business_type}"
@@ -99,8 +99,8 @@ class HomeHero(models.Model):
     is_active = models.BooleanField(default=True)
 
     class Meta:
-        verbose_name = "Home Hero"
-        verbose_name_plural = "Home Hero"
+        verbose_name = "Основна секция - Начална страница"
+        verbose_name_plural = "Основна секция - Начална страница"
 
     def __str__(self):
         return self.title
@@ -125,8 +125,8 @@ class Service(models.Model):
 
     class Meta:
         ordering = ["order"]
-        verbose_name = "Service"
-        verbose_name_plural = "Services"
+        verbose_name = "Услуги"
+        verbose_name_plural = "Услуги"
 
     def __str__(self):
         return self.title
@@ -143,8 +143,8 @@ class HomePromo(models.Model):
     is_active = models.BooleanField(default=True)
 
     class Meta:
-        verbose_name = "Home Promotion"
-        verbose_name_plural = "Home Promotions"
+        verbose_name = "Промоции - начална страница"
+        verbose_name_plural = "Промоции - начална страница"
 
     def __str__(self):
         return self.title
@@ -179,8 +179,8 @@ class GalleryPageSettings(models.Model):
     )
 
     class Meta:
-        verbose_name = "Gallery Page Settings"
-        verbose_name_plural = "Gallery Page Settings"
+        verbose_name = "Hero Настройки на Галерия"
+        verbose_name_plural = "Hero Настройки на Галерия"
 
     def __str__(self):
         return "Gallery Page Settings"
@@ -239,8 +239,8 @@ class GalleryItem(models.Model):
 
     class Meta:
         ordering = ["-created_at"]
-        verbose_name = "Gallery Item"
-        verbose_name_plural = "Gallery Items"
+        verbose_name = "Снимки/Видео Галерия"
+        verbose_name_plural = "Снимки/Видео Галерия"
 
     def __str__(self):
         return f"{self.get_item_type_display()} #{self.pk}"
@@ -258,6 +258,23 @@ class GalleryItem(models.Model):
         if self.video_file:
             return self.video_file.url
         return ""
+
+
+class PriceImage(models.Model):
+    """Images uploaded for the Prices page — owner uploads pre-designed price sheets."""
+    image   = models.ImageField(upload_to="prices/", verbose_name="Снимка с цени")
+    caption = models.CharField(max_length=120, blank=True, verbose_name="Надпис (незадължително)")
+    order   = models.PositiveIntegerField(default=0, verbose_name="Ред")
+    is_active = models.BooleanField(default=True, verbose_name="Активна")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['order', '-created_at']
+        verbose_name = "Ценова снимка"
+        verbose_name_plural = "Ценови снимки"
+
+    def __str__(self):
+        return self.caption or f"Цена #{self.pk}"
 
 
 class Location(models.Model):
@@ -292,8 +309,8 @@ class Location(models.Model):
 
     class Meta:
         ordering = ["order"]
-        verbose_name = "Location"
-        verbose_name_plural = "Locations"
+        verbose_name = "Локация панел начална страница"
+        verbose_name_plural = "Локация панел начална страница"
 
     def __str__(self):
         return self.name

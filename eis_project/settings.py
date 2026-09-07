@@ -1,4 +1,5 @@
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -121,3 +122,4 @@ MEDIA_ROOT = BASE_DIR / "mediafiles"
 STATICFILES_DIRS = [
     BASE_DIR / 'staticfiles',
 ]
+
