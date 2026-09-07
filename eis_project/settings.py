@@ -1,16 +1,23 @@
 
 import os
 from pathlib import Path
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Loads variables from .env (local, gitignored) into os.environ.
+load_dotenv(BASE_DIR / '.env')
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-sr#z^b+z&6wo3nk1!48bunkckc$(cmfn&4ndh_6it9**3_-2mm'
+# Falls back to this dev-only value if .env / SECRET_KEY env var isn't set.
+SECRET_KEY = os.environ.get(
+    'SECRET_KEY',
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -19,6 +26,11 @@ ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
 ]
+
+# Site only has the admin login — send anyone Django would otherwise
+# redirect to the default /accounts/login/ to /admin/login/ instead.
+LOGIN_URL = '/admin/login/'
+LOGIN_REDIRECT_URL = '/admin/'
 
 
 # Application definition
@@ -123,3 +135,26 @@ STATICFILES_DIRS = [
     BASE_DIR / 'staticfiles',
 ]
 
+
+# Email (contact form on /contacts + admin password reset)
+# Values come from .env (see .env.example). Without EMAIL_HOST_USER set,
+# emails just print to the console — useful for local testing without
+# real credentials.
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
+
+EMAIL_BACKEND = (
+    'django.core.mail.backends.smtp.EmailBackend'
+    if EMAIL_HOST_USER
+    else 'django.core.mail.backends.console.EmailBackend'
+)
+EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp.gmail.com')
+EMAIL_PORT = int(os.environ.get('EMAIL_PORT', 587))
+EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', 'True') == 'True'
+
+# Sent as the "From" address (most SMTP providers reject a spoofed visitor
+# email as From); the visitor's email is set as Reply-To instead.
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER or 'noreply@example.com'
+
+# Fallback recipient if SiteSettings.email is empty in the admin.
+DEFAULT_CONTACT_EMAIL = os.environ.get('DEFAULT_CONTACT_EMAIL', EMAIL_HOST_USER)
