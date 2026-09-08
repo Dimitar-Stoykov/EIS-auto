@@ -1,6 +1,7 @@
 
 import os
 import re
+import logging
 import mimetypes
 from django.conf import settings
 from django.core.mail import EmailMessage
@@ -20,6 +21,8 @@ from .models import (
     GalleryPageSettings,
     PriceImage,
 )
+
+logger = logging.getLogger(__name__)
 
 
 class HomeView(TemplateView):
@@ -199,7 +202,9 @@ class ContactsView(_BaseView):
             site_email = (getattr(site, "email", "") or "").strip()
             site_email = site_email or getattr(settings, "DEFAULT_CONTACT_EMAIL", "")
 
-            visitor_name = f"{d['first_name']} {d['last_name']}"
+            # last_name is optional now — don't leave a trailing space in the
+            # display name when it's blank.
+            visitor_name = f"{d['first_name']} {d['last_name']}".strip()
 
             subject = f"Ново запитване от {visitor_name}"
             body = (
@@ -229,15 +234,24 @@ class ContactsView(_BaseView):
                     email.send(fail_silently=False)
                     sent = True
                 except Exception:
+                    # Logged (visible in Railway's Deploy Logs) instead of
+                    # swallowed silently — this is what actually saved us
+                    # time diagnosing the Resend/SMTP issues earlier.
+                    logger.exception("Contact form: failed to send email")
                     sent = False
+            else:
+                logger.warning("Contact form: no recipient email configured (SiteSettings.email is empty)")
 
             ctx = self.get_context_data(form=ContactForm())
             ctx["form_sent"] = sent
-            ctx["form_error"] = not sent
+            # Distinguishes "the form itself was fine but sending failed"
+            # (show a generic apology) from invalid-field errors (handled
+            # per-field in the template) — the messages mean different things.
+            ctx["form_send_error"] = not sent
             return self.render_to_response(ctx)
 
         ctx = self.get_context_data(form=form)
-        ctx["form_error"] = True
+        ctx["form_validation_error"] = True
         return self.render_to_response(ctx)
 
 

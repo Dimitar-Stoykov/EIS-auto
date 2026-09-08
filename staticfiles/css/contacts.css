@@ -233,6 +233,12 @@
 /* Error highlight */
 .ct-input.error { border-color: rgba(220,53,69,.55); }
 
+.ct-field-error {
+    color: #ff8a8a;
+    font-size: .8rem;
+    margin: 2px 0 0;
+}
+
 .ct-submit {
     display: flex;
     align-items: center;

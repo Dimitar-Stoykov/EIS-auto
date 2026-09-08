@@ -100,10 +100,17 @@
             </div>
             {% endif %}
 
-            {% if form_error and not form_sent %}
+            {% if form_validation_error %}
             <div class="ct-banner ct-banner--error">
                 <i class="bi bi-exclamation-triangle-fill"></i>
-                Възникна грешка. Моля, проверете полетата и опитайте отново.
+                Моля, попълнете отбелязаните със звездичка полета (вижте бележките под тях).
+            </div>
+            {% endif %}
+
+            {% if form_send_error %}
+            <div class="ct-banner ct-banner--error">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                Възникна техническа грешка при изпращането. Моля, опитайте отново след малко, или ни се обадете директно на телефона по-долу.
             </div>
             {% endif %}
 
@@ -118,13 +125,16 @@
                                type="text" id="id_first_name" name="first_name"
                                value="{{ form.first_name.value|default:'' }}"
                                placeholder="Вашето име" required>
+                        {% if form.first_name.errors %}
+                        <p class="ct-field-error">{{ form.first_name.errors|join:" " }}</p>
+                        {% endif %}
                     </div>
                     <div class="ct-field">
-                        <label class="ct-label" for="id_last_name">Фамилия *</label>
-                        <input class="ct-input {% if form.last_name.errors %}error{% endif %}"
+                        <label class="ct-label" for="id_last_name">Фамилия</label>
+                        <input class="ct-input"
                                type="text" id="id_last_name" name="last_name"
                                value="{{ form.last_name.value|default:'' }}"
-                               placeholder="Вашата фамилия" required>
+                               placeholder="Вашата фамилия">
                     </div>
                 </div>
 
@@ -136,6 +146,9 @@
                                type="email" id="id_email" name="email"
                                value="{{ form.email.value|default:'' }}"
                                placeholder="example@mail.com" required>
+                        {% if form.email.errors %}
+                        <p class="ct-field-error">{{ form.email.errors|join:" " }}</p>
+                        {% endif %}
                     </div>
                     <div class="ct-field">
                         <label class="ct-label" for="id_phone">Телефон</label>
@@ -153,6 +166,9 @@
                               id="id_message" name="message"
                               placeholder="Опишете вашия въпрос или запитване…"
                               rows="5" required>{{ form.message.value|default:'' }}</textarea>
+                    {% if form.message.errors %}
+                    <p class="ct-field-error">{{ form.message.errors|join:" " }}</p>
+                    {% endif %}
                 </div>
 
                 <button type="submit" class="ct-submit">
