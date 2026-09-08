@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sitemaps',
+    'anymail',
 
     'eis_project',
     'eis_project.eisauto.apps.EisautoConfig',
@@ -193,24 +194,40 @@ if USE_R2:
 
 
 # Email (contact form on /contacts + admin password reset)
-# Values come from .env (see .env.example). Without EMAIL_HOST_USER set,
-# emails just print to the console — useful for local testing without
-# real credentials.
+# Values come from .env (see .env.example).
+#
+# Priority: Resend (HTTPS API) > Gmail SMTP > console.
+# Railway blocks outbound SMTP (ports 25/465/587) on the Hobby plan to stop
+# spam abuse — Gmail SMTP worked locally but hung/timed out in production,
+# taking the whole site down with it (single gunicorn worker blocked until
+# timeout). Resend sends over HTTPS (port 443), which is never blocked.
+# Locally, with no RESEND_API_KEY set, this still falls back to Gmail SMTP
+# (or console) exactly as before — nothing changes for local dev.
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
-
-EMAIL_BACKEND = (
-    'django.core.mail.backends.smtp.EmailBackend'
-    if EMAIL_HOST_USER
-    else 'django.core.mail.backends.console.EmailBackend'
-)
 EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp.gmail.com')
 EMAIL_PORT = int(os.environ.get('EMAIL_PORT', 587))
 EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', 'True') == 'True'
 
-# Sent as the "From" address (most SMTP providers reject a spoofed visitor
-# email as From); the visitor's email is set as Reply-To instead.
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER or 'noreply@example.com'
+RESEND_API_KEY = os.environ.get('RESEND_API_KEY', '')
+# Resend's own shared sending domain — works with zero setup, but (until a
+# real domain is verified with Resend) can only deliver to the email address
+# the Resend account itself was signed up with.
+RESEND_FROM_EMAIL = os.environ.get('RESEND_FROM_EMAIL', 'onboarding@resend.dev')
+
+if RESEND_API_KEY:
+    EMAIL_BACKEND = 'anymail.backends.resend.EmailBackend'
+    ANYMAIL = {'RESEND_API_KEY': RESEND_API_KEY}
+    # This is the "From" address SiteSettings/EmailMessage build on top of
+    # (see ContactsView.post) — must be Resend's own verified sender, not
+    # the business's Gmail address, which Resend doesn't own/can't send as.
+    DEFAULT_FROM_EMAIL = RESEND_FROM_EMAIL
+elif EMAIL_HOST_USER:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+    DEFAULT_FROM_EMAIL = 'noreply@example.com'
 
 # Fallback recipient if SiteSettings.email is empty in the admin.
 DEFAULT_CONTACT_EMAIL = os.environ.get('DEFAULT_CONTACT_EMAIL', EMAIL_HOST_USER)

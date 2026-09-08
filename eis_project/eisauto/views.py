@@ -215,10 +215,12 @@ class ContactsView(_BaseView):
                     email = EmailMessage(
                         subject=subject,
                         body=body,
-                        # The technical From address must stay the authenticated
-                        # site mailbox (SMTP providers reject/override a spoofed
-                        # From), but the display name shows who filled the form.
-                        from_email=f"{visitor_name} <{site_email}>",
+                        # The technical From address must stay whatever the
+                        # active email backend is authenticated/verified to
+                        # send as (settings.DEFAULT_FROM_EMAIL — the site's
+                        # Gmail with SMTP, or Resend's sender in production);
+                        # the display name shows who filled the form.
+                        from_email=f"{visitor_name} <{settings.DEFAULT_FROM_EMAIL}>",
                         to=[site_email],
                         # Owner's mail client "Reply" button goes straight to
                         # the visitor's real address.
