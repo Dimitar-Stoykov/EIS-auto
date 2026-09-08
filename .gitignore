@@ -7,8 +7,10 @@ __pycache__/
 
 # Django
 *.sqlite3
-media/
-staticfiles/
+# NOTE: staticfiles/ is the real CSS/JS source (STATICFILES_DIRS) and must
+# be committed — it's what Railway's build collects static files from.
+mediafiles/
+staticfiles_collected/
 
 # Environment variables
 .env

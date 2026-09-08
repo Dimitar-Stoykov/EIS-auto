@@ -154,10 +154,42 @@ MEDIA_URL = "/media/"
 
 MEDIA_ROOT = BASE_DIR / "mediafiles"
 
+# Required by `collectstatic` even though R2 (below) actually receives the
+# files in production — this is just where Django's checks expect a path.
+STATIC_ROOT = BASE_DIR / 'staticfiles_collected'
 
 STATICFILES_DIRS = [
     BASE_DIR / 'staticfiles',
 ]
+
+
+# Cloudflare R2 (S3-compatible) — static + media storage in production.
+# Local dev is untouched: with these env vars unset, Django falls back to
+# its normal local filesystem storage (staticfiles/ + mediafiles/), so nothing
+# changes day-to-day unless you're actually deploying.
+AWS_ACCESS_KEY_ID = os.environ.get('R2_ACCESS_KEY_ID', '')
+AWS_SECRET_ACCESS_KEY = os.environ.get('R2_SECRET_ACCESS_KEY', '')
+AWS_STORAGE_BUCKET_NAME = os.environ.get('R2_BUCKET_NAME', '')
+# e.g. https://<account_id>.r2.cloudflarestorage.com
+AWS_S3_ENDPOINT_URL = os.environ.get('R2_ENDPOINT_URL', '')
+# Public hostname files are served from — either R2's own pub-xxxx.r2.dev
+# (fine for testing) or a real custom domain later. No scheme, no slash.
+AWS_S3_CUSTOM_DOMAIN = os.environ.get('R2_PUBLIC_DOMAIN', '')
+AWS_S3_ADDRESSING_STYLE = 'virtual'
+AWS_QUERYSTRING_AUTH = False  # public bucket — no signed/expiring URLs
+AWS_S3_SIGNATURE_VERSION = 's3v4'
+AWS_S3_FILE_OVERWRITE = False
+
+USE_R2 = bool(
+    AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY
+    and AWS_STORAGE_BUCKET_NAME and AWS_S3_ENDPOINT_URL
+)
+
+if USE_R2:
+    STORAGES = {
+        "default": {"BACKEND": "eis_project.storage_backends.MediaStorage"},
+        "staticfiles": {"BACKEND": "eis_project.storage_backends.StaticStorage"},
+    }
 
 
 # Email (contact form on /contacts + admin password reset)

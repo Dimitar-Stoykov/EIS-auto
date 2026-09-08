@@ -1,0 +1,91 @@
+/* =========================================================
+   ERROR PAGES (404)  —  errors.css
+   ========================================================= */
+
+.error-page {
+    min-height: 70vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+}
+
+/* Standalone page (no navbar/footer) — fill the whole viewport instead */
+.error-page--full {
+    min-height: 100vh;
+    background: #06162d;
+    position: relative;
+    overflow: hidden;
+}
+
+.error-page--full::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: repeating-linear-gradient(
+        -55deg,
+        transparent 0px, transparent 28px,
+        rgba(255,193,7,.025) 28px, rgba(255,193,7,.025) 29px
+    );
+    pointer-events: none;
+}
+
+.error-page--full .error-page__inner {
+    position: relative;
+    z-index: 1;
+}
+
+.error-page__inner {
+    max-width: 460px;
+    text-align: center;
+}
+
+.error-page__icon {
+    width: 68px; height: 68px;
+    margin: 0 auto 22px;
+    border-radius: 18px;
+    background: rgba(255,193,7,.10);
+    border: 1px solid rgba(255,193,7,.26);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.7rem; color: #ffc107;
+}
+
+.error-page__eyebrow {
+    font-family: 'Barlow', sans-serif;
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #ffc107;
+    margin-bottom: 10px;
+}
+
+.error-page__title {
+    font-family: 'Oswald', sans-serif;
+    font-size: clamp(1.5rem, 3.4vw, 2rem);
+    font-weight: 700;
+    color: #fff;
+    margin: 0 0 12px;
+}
+
+.error-page__text {
+    color: rgba(255,255,255,.65);
+    font-size: .98rem;
+    margin-bottom: 28px;
+    line-height: 1.6;
+}
+
+.error-page__secondary {
+    margin-top: 16px;
+}
+
+.error-page__secondary a {
+    color: rgba(255,255,255,.55);
+    font-size: .9rem;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.error-page__secondary a:hover {
+    color: #ffc107;
+}

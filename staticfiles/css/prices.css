@@ -1,0 +1,313 @@
+/* =========================================================
+   PRICES PAGE  —  prices.css
+   ========================================================= */
+
+/* ── Page header ────────────────────────────────────────── */
+.pr-header {
+    background: #06162d;
+    border-bottom: 1px solid rgba(255,193,7,.14);
+    padding: 52px 0 44px;
+    position: relative;
+    overflow: hidden;
+}
+
+.pr-header::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: repeating-linear-gradient(
+        -55deg,
+        transparent 0px, transparent 28px,
+        rgba(255,193,7,.03) 28px, rgba(255,193,7,.03) 29px
+    );
+    pointer-events: none;
+}
+
+.pr-header::after {
+    content: "";
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 4px;
+    background: linear-gradient(to bottom, transparent, #ffc107 30%, #ffc107 70%, transparent);
+}
+
+.pr-header__inner {
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
+    margin-inline: auto;
+    padding-inline: 48px;
+    display: flex;
+    align-items: center;
+    gap: 32px;
+}
+
+.pr-header__icon {
+    width: 80px; height: 80px;
+    border-radius: 20px;
+    background: rgba(255,193,7,.10);
+    border: 1px solid rgba(255,193,7,.26);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2.1rem; color: #ffc107;
+    flex-shrink: 0;
+}
+
+.pr-header__crumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Barlow', sans-serif;
+    font-size: .68rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,.32);
+    margin-bottom: 12px;
+}
+
+.pr-header__crumb a { color: rgba(255,255,255,.32); text-decoration: none; transition: color .18s; }
+.pr-header__crumb a:hover { color: #ffc107; }
+.pr-header__crumb-current { color: #ffc107; }
+
+.pr-header__title {
+    font-family: 'Oswald', sans-serif;
+    font-size: clamp(2.2rem, 5vw, 3.6rem);
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #fff;
+    line-height: .95;
+    margin: 0 0 14px;
+    letter-spacing: 1px;
+}
+
+.pr-header__rule {
+    width: 70px; height: 3px;
+    background: linear-gradient(to right, #ffc107, rgba(255,193,7,0));
+    border-radius: 2px;
+    margin-bottom: 14px;
+}
+
+.pr-header__sub {
+    font-size: .88rem;
+    color: rgba(255,255,255,.52);
+    margin: 0;
+}
+
+/* ── Image grid ─────────────────────────────────────────── */
+.pr-body {
+    background: #071828;
+    padding-block: 60px;
+}
+
+.pr-body__inner {
+    max-width: 1440px;
+    margin-inline: auto;
+    padding-inline: 24px;
+}
+
+.pr-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 28px;
+}
+
+/* ── Single price card ──────────────────────────────────── */
+.pr-card {
+    position: relative;
+    border-radius: 14px;
+    overflow: hidden;
+    cursor: zoom-in;
+    background: #0a1f3a;
+    border: 1px solid rgba(255,193,7,.12);
+    transition: box-shadow .22s, border-color .22s;
+    box-shadow: 0 8px 32px rgba(0,0,0,.35);
+}
+
+.pr-card:hover {
+    box-shadow: 0 16px 52px rgba(0,0,0,.55);
+    border-color: rgba(255,193,7,.35);
+}
+
+/* Image fills full width, no cropping — all price text stays visible */
+.pr-card__img {
+    width: 100%;
+    height: auto;
+    display: block;
+    transition: filter .25s;
+}
+
+.pr-card:hover .pr-card__img {
+    filter: brightness(1.06);
+}
+
+/* Thin gold top bar */
+.pr-card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(to right, #ffc107, rgba(255,193,7,.10));
+    z-index: 2;
+}
+
+/* Zoom icon hint on hover */
+.pr-card__zoom {
+    position: absolute;
+    bottom: 14px; right: 14px;
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    background: rgba(6,22,45,.82);
+    border: 1px solid rgba(255,193,7,.35);
+    display: flex; align-items: center; justify-content: center;
+    color: #ffc107;
+    font-size: 1.1rem;
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity .22s, transform .22s;
+    z-index: 3;
+    backdrop-filter: blur(6px);
+}
+
+.pr-card:hover .pr-card__zoom {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Single card — center it */
+.pr-card:only-child {
+    grid-column: 1 / -1;
+    max-width: 780px;
+    width: 100%;
+    margin-inline: auto;
+}
+
+/* Optional caption strip at bottom */
+.pr-card__caption {
+    padding: 13px 18px;
+    font-family: 'Barlow', sans-serif;
+    font-size: .80rem;
+    font-weight: 600;
+    letter-spacing: .8px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,.60);
+    border-top: 1px solid rgba(255,193,7,.10);
+    background: #06162d;
+}
+
+/* ── Empty state ────────────────────────────────────────── */
+.pr-empty {
+    text-align: center;
+    padding: 80px 24px;
+    color: rgba(255,255,255,.35);
+}
+
+.pr-empty__icon {
+    font-size: 3.5rem;
+    color: rgba(255,193,7,.25);
+    margin-bottom: 20px;
+    display: block;
+}
+
+.pr-empty__text {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* ── Lightbox ───────────────────────────────────────────── */
+.pr-lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(3,10,22,.95);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(8px);
+}
+
+.pr-lightbox.is-open { display: flex; }
+
+.pr-lightbox__img {
+    max-width: min(90vw, 1100px);
+    max-height: 88vh;
+    object-fit: contain;
+    border-radius: 10px;
+    box-shadow: 0 32px 80px rgba(0,0,0,.70);
+    border: 1px solid rgba(255,193,7,.15);
+}
+
+.pr-lightbox__close {
+    position: absolute;
+    top: 20px; right: 24px;
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.14);
+    color: #fff;
+    font-size: 1.4rem;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: background .18s;
+    line-height: 1;
+}
+
+.pr-lightbox__close:hover { background: rgba(255,193,7,.20); color: #ffc107; }
+
+.pr-lightbox__prev,
+.pr-lightbox__next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.07);
+    border: 1px solid rgba(255,255,255,.12);
+    color: #fff;
+    font-size: 1.3rem;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: background .18s, border-color .18s;
+}
+
+.pr-lightbox__prev { left: 20px; }
+.pr-lightbox__next { right: 20px; }
+
+.pr-lightbox__prev:hover,
+.pr-lightbox__next:hover {
+    background: rgba(255,193,7,.18);
+    border-color: rgba(255,193,7,.35);
+    color: #ffc107;
+}
+
+.pr-lightbox__counter {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Barlow', sans-serif;
+    font-size: .78rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,.40);
+}
+
+/* ── Responsive ─────────────────────────────────────────── */
+@media (max-width: 900px) {
+    .pr-header__inner { padding-inline: 28px; gap: 20px; }
+    .pr-header__icon  { width: 64px; height: 64px; font-size: 1.7rem; border-radius: 14px; }
+    .pr-body__inner   { padding-inline: 24px; }
+    .pr-grid          { grid-template-columns: 1fr; gap: 20px; }
+    .pr-lightbox__prev { left: 8px; }
+    .pr-lightbox__next { right: 8px; }
+}
+
+@media (max-width: 575px) {
+    .pr-header { padding: 36px 0 30px; }
+    .pr-header__inner { padding-inline: 16px; }
+    .pr-header__icon  { display: none; }
+    .pr-body { padding-block: 36px; }
+    .pr-body__inner   { padding-inline: 10px; }
+    .pr-grid          { gap: 14px; }
+}

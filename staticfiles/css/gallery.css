@@ -1,0 +1,553 @@
+/* =========================================================
+   GALLERY PAGE  —  gallery.css
+   Dark hero / light content body
+   ========================================================= */
+
+/* ── Hero ─────────────────────────────────────────────────
+   Full-width car image as background.
+   Angled gradient overlay (not a straight line) keeps the
+   left text zone dark while the car shows clearly on the right.
+   ──────────────────────────────────────────────────────── */
+.g-hero {
+    position: relative;
+    min-height: 420px;
+    background-image: var(--hero-img, none);
+    background-size: cover;
+    background-position: center center;
+    background-color: #06162d;
+    overflow: hidden;
+    display: flex;
+    align-items: stretch;
+}
+
+/* Layer 1 — angled gradient: solid navy → diagonal fade → transparent
+   108° makes the fade edge diagonal/organic, not a straight wall */
+.g-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(
+            108deg,
+            #06162d 0%,
+            #06162d 18%,
+            rgba(6, 22, 45, .90) 28%,
+            rgba(6, 22, 45, .62) 40%,
+            rgba(6, 22, 45, .22) 55%,
+            rgba(6, 22, 45, .05) 67%,
+            transparent 78%
+        );
+    z-index: 1;
+    pointer-events: none;
+}
+
+/* Layer 2 — subtle diagonal line texture, masked to left text zone only */
+.g-hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: repeating-linear-gradient(
+        -45deg,
+        transparent 0px, transparent 22px,
+        rgba(148, 180, 190, .07) 22px, rgba(148, 180, 190, .07) 23px
+    );
+    /* Lines fade out well before the gradient fade zone */
+    -webkit-mask-image: linear-gradient(to right, black 18%, transparent 44%);
+    mask-image: linear-gradient(to right, black 18%, transparent 44%);
+    z-index: 1;
+    pointer-events: none;
+}
+
+/* ── Left text panel ── */
+.g-hero__left {
+    position: relative;
+    z-index: 2;
+    flex: 0 0 auto;
+    width: 50%;
+    max-width: 600px;
+    display: flex;
+    align-items: center;
+    padding: 60px 40px 60px 80px;
+}
+
+.g-hero__copy {
+    width: 100%;
+    max-width: 460px;
+}
+
+/* Right panel no longer needed — car is the section background */
+.g-hero__right { display: none; }
+
+/* ── Hero text ── */
+.g-hero__eyebrow {
+    font-family: 'Barlow', sans-serif;
+    font-size: .72rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #39f4ff;
+    margin: 0 0 10px;
+}
+
+.g-hero__title {
+    font-family: 'Oswald', sans-serif;
+    font-size: 3.2rem;
+    font-weight: 700;
+    line-height: .95;
+    text-transform: uppercase;
+    color: #fff;
+    margin: 0 0 14px;
+}
+
+.g-hero__title strong {
+    display: block;
+    color: #ffc107;
+}
+
+.g-hero__sub {
+    color: rgba(255, 255, 255, .72);
+    font-size: .92rem;
+    line-height: 1.65;
+    margin: 0 0 28px;
+}
+
+/* ── Stats row ── */
+.g-hero__stats {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+}
+
+.g-hero__stat {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Icon — no background, just the icon itself */
+.g-hero__stat-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+/* Target the Bootstrap Icon <i> tag directly so the font/color apply correctly */
+.g-hero__stat-icon i {
+    font-size: 1.15rem;
+    color: #ffc107;
+    line-height: 1;
+    display: block;
+}
+
+.g-hero__stat strong {
+    display: block;
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1;
+}
+
+.g-hero__stat span {
+    display: block;
+    font-size: .70rem;
+    color: rgba(255, 255, 255, .52);
+    line-height: 1.3;
+    margin-top: 2px;
+}
+
+/* ── Filter tabs ───────────────────────────────────────────
+   Light strip directly below the hero
+   ──────────────────────────────────────────────────────── */
+.g-tabs-bar {
+    background: #fff;
+    border-bottom: 1px solid #e5e0d8;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+}
+
+.g-tabs-inner {
+    width: 100%;
+    padding: 10px 40px;
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.g-tabs-inner::-webkit-scrollbar { display: none; }
+
+.g-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 22px;
+    border-radius: 999px;
+    border: 1px solid #d6d0c8;
+    background: transparent;
+    color: #555;
+    font-family: 'Barlow', sans-serif;
+    font-size: .82rem;
+    font-weight: 600;
+    letter-spacing: .4px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background .18s, border-color .18s, color .18s;
+}
+
+.g-tab:hover {
+    border-color: #ffc107;
+    color: #333;
+}
+
+.g-tab.is-active {
+    background: #ffc107;
+    border-color: #ffc107;
+    color: #06162d;
+}
+
+/* ── Content sections — LIGHT background ──────────────────
+   ──────────────────────────────────────────────────────── */
+.g-section {
+    background: #f7f3ee;
+    padding-block: 48px;
+    border-bottom: 1px solid #e8e3dc;
+}
+
+.g-section__container {
+    width: 100%;
+    padding-inline: 40px;
+}
+
+.g-section__title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.35rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .8px;
+    color: #1a1a2e;
+    margin: 0 0 24px;
+}
+
+.g-section__bar {
+    display: inline-block;
+    width: 4px;
+    height: 22px;
+    background: #ffc107;
+    border-radius: 2px;
+    flex-shrink: 0;
+}
+
+.g-section__action {
+    display: flex;
+    justify-content: center;
+    margin-top: 32px;
+}
+
+/* Outline button for light background */
+.g-btn-outline {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 28px;
+    border: 1px solid #1a1a2e;
+    border-radius: 6px;
+    background: transparent;
+    color: #1a1a2e;
+    font-family: 'Barlow', sans-serif;
+    font-size: .88rem;
+    font-weight: 600;
+    letter-spacing: .4px;
+    cursor: pointer;
+    transition: background .18s, color .18s;
+}
+
+.g-btn-outline:hover {
+    background: #1a1a2e;
+    color: #fff;
+}
+
+/* ── Photo masonry grid ────────────────────────────────── */
+.g-photo-grid {
+    display: grid;
+    grid-template-columns: 1.6fr repeat(3, 1fr);
+    grid-auto-rows: 145px;
+    gap: 8px;
+}
+
+.g-photo-item {
+    display: block;
+    overflow: hidden;
+    border-radius: 6px;
+    cursor: zoom-in;
+    position: relative;
+}
+
+.g-photo-item::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: transparent;
+    transition: background .22s;
+}
+
+.g-photo-item:hover::after {
+    background: rgba(0,0,0,.20);
+}
+
+.g-photo-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform .4s ease;
+}
+
+.g-photo-item:hover img { transform: scale(1.05); }
+
+/* First photo spans 2 rows */
+.g-photo-item--big { grid-row: span 2; }
+
+/* ── Video grid ────────────────────────────────────────── */
+.g-video-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+.g-video-card {
+    background: #1e1e2e;
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform .22s, box-shadow .22s;
+}
+
+.g-video-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 36px rgba(0,0,0,.18);
+}
+
+.g-video-card__thumb {
+    position: relative;
+    aspect-ratio: 16/9;
+    overflow: hidden;
+    cursor: pointer;
+    background: #0d1b2a;
+}
+
+.g-video-card__thumb img,
+.g-video-card__placeholder {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform .35s;
+}
+
+.g-video-card__thumb:hover img { transform: scale(1.04); }
+
+/* Play button */
+.g-video-card__play {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50px; height: 50px;
+    border-radius: 50%;
+    background: rgba(255,193,7,.92);
+    border: none;
+    color: #06162d;
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding-left: 3px;
+    transition: background .18s, transform .18s;
+    z-index: 2;
+}
+
+.g-video-card__thumb:hover .g-video-card__play {
+    background: #ffc107;
+    transform: translate(-50%, -50%) scale(1.1);
+}
+
+/* Duration badge */
+.g-video-card__dur {
+    position: absolute;
+    bottom: 7px; right: 9px;
+    background: rgba(0,0,0,.70);
+    color: #fff;
+    font-size: .70rem;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 4px;
+    z-index: 2;
+}
+
+/* Card body — text on dark card */
+.g-video-card__body { padding: 13px 15px 16px; }
+
+.g-video-card__title {
+    font-family: 'Oswald', sans-serif;
+    font-size: .95rem;
+    font-weight: 600;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    margin: 0 0 5px;
+    line-height: 1.2;
+}
+
+.g-video-card__desc {
+    font-size: .78rem;
+    color: rgba(255,255,255,.50);
+    margin: 0;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* ── CTA banner ────────────────────────────────────────── */
+.g-cta {
+    background: #1a1a2e;
+    padding-block: 36px;
+}
+
+.g-cta__inner {
+    width: 100%;
+    padding-inline: 40px;
+    display: flex;
+    align-items: center;
+    gap: 22px;
+}
+
+.g-cta__icon {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: rgba(255,193,7,.12);
+    border: 1px solid rgba(255,193,7,.3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem;
+    color: #ffc107;
+    flex-shrink: 0;
+}
+
+.g-cta__title {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.25rem; font-weight: 700;
+    color: #fff; margin: 0 0 4px;
+    text-transform: uppercase;
+}
+
+.g-cta__sub { font-size: .84rem; color: rgba(255,255,255,.55); margin: 0; }
+
+.g-cta__btn {
+    margin-left: auto;
+    display: inline-flex; align-items: center; gap: 8px;
+    background: #ffc107; color: #06162d;
+    padding: 12px 28px;
+    border-radius: 999px;
+    font-family: 'Barlow', sans-serif;
+    font-size: .88rem; font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background .18s;
+}
+
+.g-cta__btn:hover { background: #e0a800; color: #06162d; }
+
+/* ── Lightbox ──────────────────────────────────────────── */
+.g-lightbox {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,.93);
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+.g-lightbox.is-open { display: flex; }
+.g-lightbox img { max-width: 90vw; max-height: 88vh; object-fit: contain; border-radius: 6px; }
+
+.g-lightbox__close,
+.g-lightbox__prev,
+.g-lightbox__next {
+    position: absolute;
+    background: rgba(255,255,255,.12);
+    border: none; color: #fff; border-radius: 50%;
+    width: 44px; height: 44px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; cursor: pointer;
+    transition: background .18s;
+}
+.g-lightbox__close:hover,
+.g-lightbox__prev:hover,
+.g-lightbox__next:hover { background: rgba(255,193,7,.75); color: #06162d; }
+.g-lightbox__close { top: 20px; right: 20px; }
+.g-lightbox__prev  { left: 20px; top: 50%; transform: translateY(-50%); }
+.g-lightbox__next  { right: 20px; top: 50%; transform: translateY(-50%); }
+
+/* ── Video modal ───────────────────────────────────────── */
+.g-vmodal {
+    position: fixed; inset: 0; z-index: 1000;
+    display: none; align-items: center; justify-content: center;
+}
+.g-vmodal.is-open { display: flex; }
+.g-vmodal__bg { position: absolute; inset: 0; background: rgba(0,0,0,.88); cursor: pointer; }
+.g-vmodal__inner { position: relative; z-index: 1; width: min(1100px, 96vw); }
+.g-vmodal__inner video { width: 100%; max-height: 85vh; border-radius: 10px; display: block; background: #000; }
+.g-vmodal__close {
+    position: absolute; top: -42px; right: 0;
+    background: rgba(255,255,255,.15); border: none; color: #fff;
+    border-radius: 50%; width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 1rem; transition: background .18s;
+}
+.g-vmodal__close:hover { background: rgba(255,193,7,.7); color: #06162d; }
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+@media (max-width: 991px) {
+    .g-hero { min-height: 0; }
+    /* On mobile the gradient angle flattens a bit so full content stays readable */
+    .g-hero::before {
+        background: linear-gradient(
+            to bottom,
+            rgba(6,22,45,.92) 0%,
+            rgba(6,22,45,.82) 60%,
+            rgba(6,22,45,.55) 100%
+        );
+    }
+    .g-hero::after { display: none; } /* lines off on small screens */
+    .g-hero__left { width: 100%; max-width: 100%; padding: 44px 24px; }
+    .g-hero__title { font-size: 2.6rem; }
+    .g-tabs-inner { padding-inline: 20px; }
+    .g-section__container { padding-inline: 20px; }
+    .g-photo-grid { grid-template-columns: repeat(3,1fr); grid-auto-rows: 120px; }
+    .g-photo-item--big { grid-row: span 2; }
+    .g-video-grid { grid-template-columns: repeat(2,1fr); }
+    .g-cta__inner { flex-wrap: wrap; padding-inline: 20px; }
+    .g-cta__btn { margin-left: 0; width: 100%; justify-content: center; }
+}
+
+@media (max-width: 575px) {
+    .g-hero__left { width: 100%; max-width: 100%; padding: 32px 16px; }
+    .g-hero__title { font-size: 2rem; }
+    .g-hero__stats { gap: 16px; }
+    .g-tabs-inner { padding-inline: 12px; gap: 4px; }
+    .g-tab { padding: 8px 14px; font-size: .76rem; }
+    .g-section__container { padding-inline: 14px; }
+    .g-section { padding-block: 28px; }
+    .g-photo-grid { grid-template-columns: repeat(2,1fr); grid-auto-rows: 100px; }
+    .g-photo-item--big { grid-column: span 2; grid-row: span 1; }
+    .g-video-grid { grid-template-columns: 1fr; }
+    .g-cta__icon { display: none; }
+    .g-cta__inner { padding-inline: 14px; }
+}
