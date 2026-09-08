@@ -41,3 +41,18 @@ class ContactForm(forms.Form):
             "rows": 5,
         }),
     )
+
+    # Honeypot — hidden from real visitors via CSS (see contacts.html/css),
+    # left blank by them. Bots that auto-fill every field on a form tend to
+    # fill this too. Never shown as an error to the user — ContactsView
+    # checks it and silently drops the submission (pretends success) so
+    # bots don't learn they were caught.
+    website = forms.CharField(
+        required=False,
+        label="Website",
+        widget=forms.TextInput(attrs={
+            "autocomplete": "off",
+            "tabindex": "-1",
+            "class": "ct-hp-field",
+        }),
+    )

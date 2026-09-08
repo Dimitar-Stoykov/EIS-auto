@@ -7,7 +7,9 @@ from django.conf import settings
 from django.core.mail import EmailMessage
 from django.http import StreamingHttpResponse, FileResponse, Http404, JsonResponse, HttpResponse
 from django.template.loader import render_to_string
+from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView
+from django_ratelimit.decorators import ratelimit
 from .forms import ContactForm
 from .models import (
     AboutPage,
@@ -181,6 +183,12 @@ class PricesView(_BaseView):
         return context
 
 
+@method_decorator(
+    # 5 submissions/hour per IP. block=False (not the decorator's own 403)
+    # so we can show our own Bulgarian message via the normal template flow.
+    ratelimit(key='ip', rate='5/h', method='POST', block=False),
+    name='post',
+)
 class ContactsView(_BaseView):
     template_name = "contacts.html"
 
@@ -194,7 +202,23 @@ class ContactsView(_BaseView):
         return self.render_to_response(self.get_context_data())
 
     def post(self, request, **kwargs):
+        if getattr(request, 'limited', False):
+            logger.warning("Contact form: rate limit hit for IP %s", request.META.get('REMOTE_ADDR'))
+            ctx = self.get_context_data(form=ContactForm())
+            ctx["form_rate_limited"] = True
+            return self.render_to_response(ctx)
+
         form = ContactForm(request.POST)
+
+        # Honeypot: real visitors never see/fill this field (hidden via CSS).
+        # A bot that auto-fills every input on the page likely will. Pretend
+        # success without actually sending — don't tip the bot off.
+        if form.is_valid() and form.cleaned_data.get("website"):
+            logger.warning("Contact form: honeypot triggered, dropping silently")
+            ctx = self.get_context_data(form=ContactForm())
+            ctx["form_sent"] = True
+            return self.render_to_response(ctx)
+
         if form.is_valid():
             d = form.cleaned_data
             site = SiteSettings.objects.first()

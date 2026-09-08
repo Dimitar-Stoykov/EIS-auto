@@ -198,6 +198,17 @@
 .ct-field { display: flex; flex-direction: column; gap: 7px; margin-bottom: 16px; }
 .ct-field:last-of-type { margin-bottom: 0; }
 
+/* Honeypot — off-screen (not display:none, which some bots detect and skip),
+   invisible/unreachable for real visitors and screen readers. */
+.ct-hp-wrap {
+    position: absolute;
+    left: -9999px;
+    top: -9999px;
+    height: 0;
+    width: 0;
+    overflow: hidden;
+}
+
 .ct-label {
     font-family: 'Barlow', sans-serif;
     font-size: .70rem;
