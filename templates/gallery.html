@@ -2,6 +2,9 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block title %}Галерия | {{ site.company_name }} — Гумаджийница и автосервиз София{% endblock %}
+{% block meta_description %}Снимки и видеа от реални ремонти, смяна на гуми и обслужване на автомобили в {{ site.company_name }} — гумаджийница и автосервиз в София.{% endblock %}
+
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/gallery.css' %}">
 {% endblock %}
@@ -93,7 +96,7 @@
                class="g-photo-item {% if forloop.first %}g-photo-item--big{% endif %}"
                data-lightbox>
                 <img src="{{ item.image.url }}"
-                     alt="Снимка от сервиза"
+                     alt="Снимка от {{ site.company_name }} — гумаджийница и автосервиз София"
                      loading="lazy">
             </a>
             {% endfor %}
@@ -129,7 +132,7 @@
             <article class="g-video-card">
                 <div class="g-video-card__thumb" data-video-url="{{ item.video_url }}">
                     {% if item.image_url %}
-                        <img src="{{ item.image_url }}" alt="Видео" loading="lazy">
+                        <img src="{{ item.image_url }}" alt="Видео от {{ site.company_name }} — гумаджийница и автосервиз София" loading="lazy">
                     {% elif item.video_url %}
                         <video src="{{ item.video_url }}"
                                preload="metadata"

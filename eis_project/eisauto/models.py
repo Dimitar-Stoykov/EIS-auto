@@ -18,8 +18,8 @@ class AboutPage(models.Model):
     address_detail  = models.CharField(max_length=255, blank=True, verbose_name="Адрес (за страницата)")
 
     class Meta:
-        verbose_name        = "Страница Контакти"
-        verbose_name_plural = "Страница Контакти"
+        verbose_name        = "Страница За Нас"
+        verbose_name_plural = "Страница За Нас"
 
     def __str__(self):
         return "About Page"

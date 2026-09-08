@@ -1,5 +1,10 @@
 {% extends "base.html" %}
 
+{% block title %}{{ site.company_name }} | Гумаджийница | Продажба на гуми втора употреба и нови | Баланс и смяна на гуми | Джанти втора употреба | Сервиз за гуми София{% endblock %}
+{% block meta_description %}{{ site.company_name }} — гумаджийница и автосервиз в София. Продажба на нови и втора употреба гуми, джанти втора употреба, баланс и смяна на гуми, пълен автосервиз. Обадете се и запазете час.{% endblock %}
+{% block og_title %}{{ site.company_name }} — Гумаджийница и автосервиз София{% endblock %}
+{% block og_description %}Продажба на гуми (нови и втора употреба), джанти, баланс и смяна на гуми, автосервиз и пътна помощ в София.{% endblock %}
+
 {% block content %}
 
 <section class="home-hero" style="background-image: url('{{ hero.hero_image.url }}');">
@@ -63,6 +68,7 @@
     <div class="container">
         <div class="home-section__heading">
             <p class="section-eyebrow">Нашите услуги</p>
+            <h2 class="section-title">Гуми, джанти, баланс и автосервиз</h2>
         </div>
 
         <div class="service-slider-wrap">
@@ -74,7 +80,7 @@
                     <article class="service-card">
                         <div class="service-card__image">
                             {% if service.image_url %}
-                                <img src="{{ service.image_url }}" alt="{{ service.title }}">
+                                <img src="{{ service.image_url }}" alt="{{ service.title }}" loading="lazy">
                             {% else %}
                                 <div class="service-card__image-placeholder"></div>
                             {% endif %}
@@ -109,6 +115,7 @@
         <div class="home-section__heading home-section__heading--row">
             <div>
                 <p class="section-eyebrow">Промоции</p>
+                <h2 class="section-title">Актуални промоции</h2>
             </div>
             <div class="promo-slider__controls" aria-label="Promo controls">
                 <button type="button" class="promo-slider__arrow" data-promo-prev aria-label="Предишна промоция">
@@ -126,7 +133,7 @@
                     <article class="promo-slide">
                         <div class="promo-card">
                             {% if p.image_url %}
-                                <img src="{{ p.image_url }}" alt="{{ p.title }}">
+                                <img src="{{ p.image_url }}" alt="{{ p.title }}" loading="lazy">
                             {% endif %}
                             <div class="promo-card__shade"></div>
                             <span class="promo-card__badge">{{ p.badge }}</span>
@@ -152,6 +159,7 @@
     <div class="container">
         <div class="home-section__heading">
             <p class="section-eyebrow">Намерете ни</p>
+            <h2 class="section-title">Локации в София</h2>
         </div>
 
         <div class="location-list">
@@ -199,7 +207,7 @@
         <div class="gallery-teaser">
             {% for item in gallery_preview %}
                 <a href="/gallery/" class="gallery-teaser__item {% if forloop.counter == 1 %}gallery-teaser__item--featured{% endif %}">
-                    <img src="{{ item.image_url }}" alt="{{ item.title }}">
+                    <img src="{{ item.image_url }}" alt="Снимка от {{ site.company_name }} — гумаджийница и автосервиз София" loading="lazy">
                 </a>
             {% endfor %}
         </div>

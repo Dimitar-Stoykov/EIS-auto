@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block title %}Цени | Гуми, джанти, баланс и смяна на гуми — {{ site.company_name }} София{% endblock %}
+{% block meta_description %}Актуален ценоразпис на {{ site.company_name }}: продажба на гуми (нови и втора употреба), джанти втора употреба, баланс и смяна на гуми в София.{% endblock %}
+
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/prices.css' %}">
 {% endblock %}

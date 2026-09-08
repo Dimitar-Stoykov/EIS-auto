@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block title %}{{ service_page.hero_title|default:service_page.get_service_type_display }} | {{ site.company_name }} — София{% endblock %}
+{% block meta_description %}{% if service_page.description %}{{ service_page.description|truncatechars:160 }}{% else %}{{ service_page.get_service_type_display }} от {{ site.company_name }} — гумаджийница и автосервиз в София.{% endif %}{% endblock %}
+
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/service_page.css' %}">
 {% endblock %}

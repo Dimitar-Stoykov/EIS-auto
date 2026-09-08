@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block title %}За нас | {{ site.company_name }} — Гумаджийница и автосервиз София{% endblock %}
+{% block meta_description %}Запознайте се с {{ site.company_name }} — гумаджийница и автосервиз в София с опитен екип, продажба на гуми и джанти, баланс, смяна на гуми и пълно обслужване на автомобила.{% endblock %}
+
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/about.css' %}">
 {% endblock %}
@@ -78,7 +81,7 @@
         <!-- RIGHT: social media (only when at least one link exists) -->
         {% if site and site.facebook_url or site and site.instagram_url or site and site.tiktok_url %}
         <aside class="ab-social">
-            <p class="ab-social__heading">Последвайте ни</p>
+            <h3 class="ab-social__heading">Последвайте ни</h3>
             <p class="ab-social__sub">Следете ни в социалните мрежи за новини и актуални оферти.</p>
 
             <ul class="ab-social__list">

@@ -4,7 +4,7 @@ import re
 import mimetypes
 from django.conf import settings
 from django.core.mail import EmailMessage
-from django.http import StreamingHttpResponse, FileResponse, Http404, JsonResponse
+from django.http import StreamingHttpResponse, FileResponse, Http404, JsonResponse, HttpResponse
 from django.template.loader import render_to_string
 from django.views.generic import TemplateView
 from .forms import ContactForm
@@ -237,6 +237,19 @@ class ContactsView(_BaseView):
         ctx = self.get_context_data(form=form)
         ctx["form_error"] = True
         return self.render_to_response(ctx)
+
+
+def robots_txt(request):
+    """robots.txt — points crawlers at the sitemap, keeps /admin/ out of the index."""
+    sitemap_url = request.build_absolute_uri('/sitemap.xml')
+    lines = [
+        "User-agent: *",
+        "Disallow: /admin/",
+        "Allow: /",
+        "",
+        f"Sitemap: {sitemap_url}",
+    ]
+    return HttpResponse("\n".join(lines), content_type="text/plain")
 
 
 def stream_media(request, path):

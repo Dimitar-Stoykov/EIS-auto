@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block title %}Контакти | {{ site.company_name }} — Гумаджийница и автосервиз София{% endblock %}
+{% block meta_description %}Свържете се с {{ site.company_name }} — гумаджийница и автосервиз в София. Телефон, имейл, адрес и карта, или изпратете запитване през формата.{% endblock %}
+
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/contacts.css' %}">
 {% endblock %}
