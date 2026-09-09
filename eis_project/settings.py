@@ -30,6 +30,13 @@ CSRF_TRUSTED_ORIGINS = [
     if o.strip()
 ]
 
+# Railway/Cloudflare terminate SSL in front of the app and forward requests
+# over plain HTTP internally. Without this, Django thinks every request is
+# HTTP, so request.is_secure() is False and it builds http:// links in the
+# sitemap, canonical tags, etc. even though the site is actually served over
+# https. This tells Django to trust the X-Forwarded-Proto header instead.
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 LOGIN_URL = '/admin/login/'
 LOGIN_REDIRECT_URL = '/admin/'
 
