@@ -22,3 +22,7 @@ staticfiles_collected/
 
 # Internal deployment notes — not for the public repo
 DEPLOYMENT.md
+
+# One-off data migration dumps — regenerate with dumpdata when needed,
+# don't keep stale snapshots in the repo
+data.json
