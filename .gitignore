@@ -19,3 +19,6 @@ staticfiles_collected/
 .vscode/
 
 .idea/
+
+# Internal deployment notes — not for the public repo
+DEPLOYMENT.md
