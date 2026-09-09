@@ -3,6 +3,7 @@ from django.urls import path
 from django.shortcuts import redirect
 from django.contrib import messages
 from django.template.response import TemplateResponse
+from django.utils.html import format_html
 from .models import (
     AboutPage,
     ServicePage,
@@ -113,7 +114,8 @@ class GalleryPageSettingsAdmin(admin.ModelAdmin):
 
 @admin.register(GalleryItem)
 class GalleryItemAdmin(admin.ModelAdmin):
-    list_display = ("__str__", "item_type", "duration", "order", "is_active")
+    list_display = ("thumb", "__str__", "item_type", "duration", "order", "is_active")
+    list_display_links = ("thumb", "__str__")
     list_editable = ("order", "is_active")
     list_filter = ("item_type", "is_active")
     fieldsets = (
@@ -121,14 +123,53 @@ class GalleryItemAdmin(admin.ModelAdmin):
             "fields": ("item_type", "order", "is_active"),
         }),
         ("Снимка", {
-            "fields": ("image",),
+            "fields": ("image", "preview"),
             "description": "Попълнете само ако типът е 'Снимка'.",
         }),
         ("Видео", {
-            "fields": ("video_file", "video_thumbnail", "duration"),
+            "fields": ("video_file", "video_preview", "video_thumbnail", "duration"),
             "description": "Попълнете само ако типът е 'Видео'.",
         }),
     )
+    readonly_fields = ("preview", "video_preview")
+
+    @admin.display(description="Преглед на видеото")
+    def video_preview(self, obj):
+        if obj.video_file:
+            return format_html(
+                '<video src="{}" controls style="max-width:360px;max-height:280px;border-radius:8px;"></video>',
+                obj.video_file.url,
+            )
+        return "—"
+
+    @admin.display(description="Преглед")
+    def thumb(self, obj):
+        # Image items: show the image itself. Video items: show the
+        # thumbnail if one was uploaded, otherwise a generic video icon
+        # so the row is still visually distinguishable in the list.
+        if obj.item_type == obj.TYPE_IMAGE and obj.image:
+            return format_html(
+                '<img src="{}" style="width:70px;height:52px;object-fit:cover;border-radius:6px;">',
+                obj.image.url,
+            )
+        if obj.item_type == obj.TYPE_VIDEO and obj.video_thumbnail:
+            return format_html(
+                '<img src="{}" style="width:70px;height:52px;object-fit:cover;border-radius:6px;">',
+                obj.video_thumbnail.url,
+            )
+        if obj.item_type == obj.TYPE_VIDEO and obj.video_file:
+            return format_html(
+                '<div style="width:70px;height:52px;display:flex;align-items:center;'
+                'justify-content:center;background:#222;border-radius:6px;color:#fff;font-size:1.4rem;">'
+                '<i class="bi bi-camera-reels"></i></div>'
+            )
+        return "—"
+
+    @admin.display(description="Преглед на снимката")
+    def preview(self, obj):
+        if obj.image:
+            return format_html('<img src="{}" style="max-width:320px;max-height:320px;border-radius:8px;">', obj.image.url)
+        return "—"
 
     def get_urls(self):
         urls = super().get_urls()
@@ -211,9 +252,27 @@ class GalleryItemAdmin(admin.ModelAdmin):
 
 @admin.register(PriceImage)
 class PriceImageAdmin(admin.ModelAdmin):
-    list_display  = ('__str__', 'order', 'is_active', 'created_at')
+    list_display  = ('thumb', '__str__', 'order', 'is_active', 'created_at')
+    list_display_links = ('thumb', '__str__')
     list_editable = ('order', 'is_active')
     list_filter   = ('is_active',)
+    readonly_fields = ('preview',)
+    fields = ('image', 'preview', 'caption', 'order', 'is_active')
+
+    @admin.display(description="Преглед")
+    def thumb(self, obj):
+        if obj.image:
+            return format_html(
+                '<img src="{}" style="width:70px;height:52px;object-fit:cover;border-radius:6px;">',
+                obj.image.url,
+            )
+        return "—"
+
+    @admin.display(description="Преглед на снимката")
+    def preview(self, obj):
+        if obj.image:
+            return format_html('<img src="{}" style="max-width:320px;max-height:320px;border-radius:8px;">', obj.image.url)
+        return "—"
 
     def get_urls(self):
         urls = super().get_urls()
