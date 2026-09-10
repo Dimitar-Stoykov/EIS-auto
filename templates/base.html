@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>{% block title %}{{ site.company_name }} — Гумаджийница и автосервиз София{% endblock %}</title>
-    <meta name="description" content="{% block meta_description %}{{ site.company_name }} — гумаджийница и автосервиз в София. Продажба на нови и втора употреба гуми и джанти, баланс и смяна на гуми, автосервиз и пътна помощ.{% endblock %}">
+    <title>{% block title %}Eis Auto — Гумаджийница и автосервиз София{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}Eis Auto — гумаджийница и автосервиз в София. Баланс и смяна на гуми, автосервиз и пътна помощ.{% endblock %}">
     <meta name="robots" content="index, follow">
 
     <!-- Canonical -->
@@ -14,9 +14,9 @@
 
     <!-- Open Graph -->
     <meta property="og:type" content="website">
-    <meta property="og:site_name" content="{{ site.company_name }}">
-    <meta property="og:title" content="{% block og_title %}{{ site.company_name }}{% endblock %}">
-    <meta property="og:description" content="{% block og_description %}{{ site.company_name }} — гумаджийница и автосервиз в София.{% endblock %}">
+    <meta property="og:site_name" content="Eis Auto">
+    <meta property="og:title" content="{% block og_title %}Eis Auto — Гумаджийница и автосервиз София{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Eis Auto — гумаджийница и автосервиз в София.{% endblock %}">
     <meta property="og:url" content="{{ request.scheme }}://{{ request.get_host }}{{ request.path }}">
     <meta property="og:locale" content="bg_BG">
 
@@ -40,7 +40,8 @@
     {
         "@context": "https://schema.org",
         "@type": ["AutoRepair", "TireShop"],
-        "name": "{{ site.company_name|escapejs }}",
+        "name": "Eis Auto",
+        "alternateName": ["Eis Auto", "{{ site.company_name|escapejs }} Ауто", "{{ site.company_name|escapejs }} Автосервиз", "Eis Autoservice"],
         {% if site.phone %}"telephone": "{{ site.phone|escapejs }}",{% endif %}
         {% if site.email %}"email": "{{ site.email|escapejs }}",{% endif %}
         "url": "{{ request.scheme }}://{{ request.get_host }}/",
